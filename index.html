@@ -1,15 +1,115 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <title>Human Resource Machine Program Viewer</title>
 <style>
+body {
+	font-family: Impact;
+}
+#code div {
+	margin-top: 0.3em;
+	text-transform: lowercase;
+}
+.unknown {
+}
+.copyfrom,.copyto {
+	background-color: #c96a52;
+	color: #5f2b1d;
+}
+.comment {
+	background-color: #ddd6b5;
+	color: black;
+}
+.inbox,.outbox {
+	background-color: #9cb65b;
+	color: #474f2c;
+}
+.bumpup,.bumpdown,.add,.sub {
+	background-color: #c48d63;
+	color: #5b3d27;
+}
+.jump,.jumpn,.jumpz,.jumpdst {
+	background-color: #8d8dc1;
+	color: #3d3c5a;
+}
+.jumpdst {
+	color: #5d5d91;
+}
+.asm_comment {
+	background-color: #ddd6b5;
+	color: #666;
+}
 </style>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 </head>
 <body>
 <h1>Human Resource Machine Program Viewer</h1>
 
+
+<div id="code">
+</div>
+<!-- <button onclick="mycode()">run</button> -->
+
 <div class="footer">©2015 Alan De Smet</div>
 
-
 <script>
+function code_arrived(data) {
+	console.log("Done");
+
+	var re_copyfrom = /^\s*COPYFROM/i;
+	var re_copyto = /^\s*COPYTO/i;
+	var re_comment = /^\s*COMMENT/i;
+	var re_inbox = /^\s*INBOX/i;
+	var re_outbox = /^\s*OUTBOX/i;
+	var re_bumpup = /^\s*BUMPUP/i;
+	var re_bumpdown = /^\s*BUMPDOWN/i;
+	var re_jump = /^\s*JUMP/i;
+	var re_jumpz = /^\s*JUMPZ/i;
+	var re_jumpn = /^\s*JUMPN/i;
+	var re_add = /^\s*ADD/i;
+	var re_sub = /^\s*SUB/i;
+	var re_asm_comment = /^\s*--/;
+	var re_jump_dst = /\s*\S+:/;
+
+	//console.log(this.responseText);
+	//var lines = this.responseText.split(new RegExp('\r?\n'));
+	var lines = data.split(new RegExp('\r?\n'));
+	var root = $('#code');
+	for(var i = 0; i < lines.length; i++) {
+		var new_elem = $(document.createElement('div'));
+		new_elem.text(i + " " + lines[i]);
+		var newclass = 'unknown';
+		if(re_copyfrom.test(lines[i])) { newclass = 'copyfrom'; }
+		if(re_copyto.test(lines[i])) { newclass = 'copyto'; }
+		if(re_comment.test(lines[i])) { newclass = 'comment'; }
+		if(re_inbox.test(lines[i])) { newclass = 'inbox'; }
+		if(re_outbox.test(lines[i])) { newclass = 'outbox'; }
+		if(re_bumpup.test(lines[i])) { newclass = 'bumpup'; }
+		if(re_bumpdown.test(lines[i])) { newclass = 'bumpdown'; }
+		if(re_jump.test(lines[i])) { newclass = 'jump'; }
+		if(re_jumpn.test(lines[i])) { newclass = 'jumpn'; }
+		if(re_jumpz.test(lines[i])) { newclass = 'jumpz'; }
+		if(re_jump_dst.test(lines[i])) { newclass = 'jumpdst'; }
+		if(re_add.test(lines[i])) { newclass = 'add'; }
+		if(re_sub.test(lines[i])) { newclass = 'sub'; }
+		if(re_asm_comment.test(lines[i])) { newclass = 'asm_comment'; }
+		new_elem.attr('class', newclass);
+		root.append(new_elem);
+	}
+
+}
+var code = "tests/36-Alphabetizer.size.speed.asm";
+
+$.get(code, code_arrived, "text")
+
+//var codereq = new XMLHttpRequest();
+//codereq.overrideMimeType('text/plain');
+//codereq.addEventListener("load", code_arrived);
+////codereq.addEventListener("error", function(){console.log("error")});
+////codereq.addEventListener("abort", function(){console.log("abort")});
+////codereq.addEventListener("progress", function(o){console.log("progress", o.loaded, o.total)});
+//console.log("Getting", code);
+//codereq.open("GET", code);
+//codereq.send()
+//console.log("Request out");
 </script>
 </body>
 </html>
