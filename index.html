@@ -103,7 +103,7 @@ function code_arrived(data) {
 	var line_number = 0;
 	for(var i = 0; i < lines.length; i++) {
 		var new_elem = $(document.createElement('span'));
-		new_elem.text(i + " " + lines[i]);
+		new_elem.text(lines[i]);
 		var newclass = 'unknown';
 		var iscode = 1;
 		if(re_copyfrom.test(lines[i])) { newclass = 'copyfrom'; }
