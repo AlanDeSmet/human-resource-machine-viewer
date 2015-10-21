@@ -1,12 +1,26 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <title>Human Resource Machine Program Viewer</title>
+<link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
 <style>
 body {
-	font-family: Impact;
+	font-family: 'Passion One', sans-serif, Impact;
+	font-size: 150%;
+}
+h1,h2,h3,h4 {
+	font-weight: normal;
+}
+#code {
+	background-color: #bca08b;
 }
 #code div {
-	margin-top: 0.3em;
+	margin: .3em;
+}
+#code div span {
 	text-transform: lowercase;
+	padding: 0.1em 0.5em;
+	display: inline-block;
+	border-radius: 0.1em;
+	box-shadow: 0.1em 0.1em 0.05em #ac907b;
 }
 .unknown {
 }
@@ -74,7 +88,7 @@ function code_arrived(data) {
 	var lines = data.split(new RegExp('\r?\n'));
 	var root = $('#code');
 	for(var i = 0; i < lines.length; i++) {
-		var new_elem = $(document.createElement('div'));
+		var new_elem = $(document.createElement('span'));
 		new_elem.text(i + " " + lines[i]);
 		var newclass = 'unknown';
 		if(re_copyfrom.test(lines[i])) { newclass = 'copyfrom'; }
@@ -92,12 +106,15 @@ function code_arrived(data) {
 		if(re_sub.test(lines[i])) { newclass = 'sub'; }
 		if(re_asm_comment.test(lines[i])) { newclass = 'asm_comment'; }
 		new_elem.attr('class', newclass);
-		root.append(new_elem);
+		var new_div = $(document.createElement('div'));
+		new_div.append(new_elem);
+		root.append(new_div);
 	}
 
 }
 var code = "tests/36-Alphabetizer.size.speed.asm";
 
+// TODO: Why logging a syntax error? I'm specifying text.
 $.get(code, code_arrived, "text")
 
 //var codereq = new XMLHttpRequest();
