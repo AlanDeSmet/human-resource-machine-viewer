@@ -96,16 +96,19 @@ function code_arrived(data) {
 	var root = $('#code');
 	var num_len = 2;
 	var pad = "00000";
+	// TODO: This is the wrong way to count lines; many aren't.
 	if(lines.length > 9999) { num_len = 5; }
 	else if(lines.length > 999) { num_len = 4; }
 	else if(lines.length > 99) { num_len = 3; } 
+	var line_number = 0;
 	for(var i = 0; i < lines.length; i++) {
 		var new_elem = $(document.createElement('span'));
 		new_elem.text(i + " " + lines[i]);
 		var newclass = 'unknown';
+		var iscode = 1;
 		if(re_copyfrom.test(lines[i])) { newclass = 'copyfrom'; }
 		if(re_copyto.test(lines[i])) { newclass = 'copyto'; }
-		if(re_comment.test(lines[i])) { newclass = 'comment'; }
+		if(re_comment.test(lines[i])) { newclass = 'comment'; iscode=0; }
 		if(re_inbox.test(lines[i])) { newclass = 'inbox'; }
 		if(re_outbox.test(lines[i])) { newclass = 'outbox'; }
 		if(re_bumpup.test(lines[i])) { newclass = 'bumpup'; }
@@ -113,15 +116,19 @@ function code_arrived(data) {
 		if(re_jump.test(lines[i])) { newclass = 'jump'; }
 		if(re_jumpn.test(lines[i])) { newclass = 'jumpn'; }
 		if(re_jumpz.test(lines[i])) { newclass = 'jumpz'; }
-		if(re_jump_dst.test(lines[i])) { newclass = 'jumpdst'; }
+		if(re_jump_dst.test(lines[i])) { newclass = 'jumpdst'; iscode=0; }
 		if(re_add.test(lines[i])) { newclass = 'add'; }
 		if(re_sub.test(lines[i])) { newclass = 'sub'; }
-		if(re_asm_comment.test(lines[i])) { newclass = 'asm_comment'; }
+		if(re_asm_comment.test(lines[i])) { newclass = 'asm_comment'; iscode=0; }
 		new_elem.attr('class', newclass);
 
+
 		var new_td_num = $(document.createElement('td'));
-		var linenum = (pad+i).slice(-num_len);
-		new_td_num.text(linenum);
+		if(iscode) {
+			line_number++;
+			var linenum = (pad+line_number).slice(-num_len);
+			new_td_num.text(linenum);
+		}
 		new_td_num.attr('class', 'linenum');
 
 		var new_td_code = $(document.createElement('td'));
