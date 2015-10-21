@@ -4,21 +4,24 @@
 <style>
 body {
 	font-family: 'Passion One', sans-serif, Impact;
-	font-size: 150%;
+	font-size: 130%;
 }
 h1,h2,h3,h4 {
 	font-weight: normal;
 }
 #code {
 	background-color: #bca08b;
+	border-collapse: collapse;
 }
 #code div {
 	margin: .3em;
 }
-#code div span {
+#code td {
+	padding: 0.3em;
+}
+#code span {
 	text-transform: lowercase;
 	padding: 0.1em 0.5em;
-	display: inline-block;
 	border-radius: 0.1em;
 	box-shadow: 0.1em 0.1em 0.05em #ac907b;
 }
@@ -51,6 +54,10 @@ h1,h2,h3,h4 {
 	background-color: #ddd6b5;
 	color: #666;
 }
+td.linenum {
+	background-color: #a48a78;
+	color: #7b6456;
+}
 </style>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 </head>
@@ -58,8 +65,8 @@ h1,h2,h3,h4 {
 <h1>Human Resource Machine Program Viewer</h1>
 
 
-<div id="code">
-</div>
+<table id="code">
+</table>
 <!-- <button onclick="mycode()">run</button> -->
 
 <div class="footer">©2015 Alan De Smet</div>
@@ -87,6 +94,11 @@ function code_arrived(data) {
 	//var lines = this.responseText.split(new RegExp('\r?\n'));
 	var lines = data.split(new RegExp('\r?\n'));
 	var root = $('#code');
+	var num_len = 2;
+	var pad = "00000";
+	if(lines.length > 9999) { num_len = 5; }
+	else if(lines.length > 999) { num_len = 4; }
+	else if(lines.length > 99) { num_len = 3; } 
 	for(var i = 0; i < lines.length; i++) {
 		var new_elem = $(document.createElement('span'));
 		new_elem.text(i + " " + lines[i]);
@@ -106,9 +118,19 @@ function code_arrived(data) {
 		if(re_sub.test(lines[i])) { newclass = 'sub'; }
 		if(re_asm_comment.test(lines[i])) { newclass = 'asm_comment'; }
 		new_elem.attr('class', newclass);
-		var new_div = $(document.createElement('div'));
-		new_div.append(new_elem);
-		root.append(new_div);
+
+		var new_td_num = $(document.createElement('td'));
+		var linenum = (pad+i).slice(-num_len);
+		new_td_num.text(linenum);
+		new_td_num.attr('class', 'linenum');
+
+		var new_td_code = $(document.createElement('td'));
+		new_td_code.append(new_elem);
+
+		var new_row = $(document.createElement('tr'));
+		new_row.append(new_td_num);
+		new_row.append(new_td_code);
+		root.append(new_row);
 	}
 
 }
