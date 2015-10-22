@@ -113,7 +113,7 @@ function tokenize_line(line) {
 }
 
 function is_code(cmd) {
-	if(cmd == 'blank' || cmd == 'jumpdst' || cmd == 'asm_comment' || cmd == 'comment') { return 0; }
+	if(cmd == 'invalid' || cmd == 'blank' || cmd == 'jumpdst' || cmd == 'asm_comment' || cmd == 'comment') { return 0; }
 	return 1;
 }
 
