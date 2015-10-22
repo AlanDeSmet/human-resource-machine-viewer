@@ -79,25 +79,46 @@ td.linenum {
 <div class="footer">©2015 Alan De Smet</div>
 
 <script>
+var re_asm_comment = /^--/;
+var re_jump_dst = /^(\S+):/;
+
+function tokenize_line(line) {
+	var match;
+
+	line = line.replace(/^\s+/, '');
+	line = line.replace(/\s+$/, '');
+
+	if(line == "") { return [ 'blank' ]; }
+	if(match = re_jump_dst.exec(line)) { return ['jumpdst', match[1]]; }
+	if(re_asm_comment.test(line)) { return ['asm_comment', line]; }
+
+	var tokens = line.split(/\s+/);
+
+	var cmd = tokens[0].toLowerCase();
+
+	var onearg = ['copyfrom', 'copyto', 'bumpup', 'bumpdown', 'jump', 'jumpn', 'jumpz', 'add', 'sub', 'comment'];
+	var zeroarg = ['inbox', 'outbox'];
+
+	if(tokens.length == 2) {
+		for(var i = 0; i < onearg.length; i++) {
+			if(cmd == onearg[i]) { return [cmd, tokens[1]]; }
+		}
+	} else if(tokens.length == 1) {
+		for(var i = 0; i < zeroarg.length; i++) {
+			if(cmd == zeroarg[i]) { return [cmd]; }
+		}
+	}
+
+	return [ 'invalid', line ];
+}
+
+function is_code(cmd) {
+	if(cmd == 'jumpdst' || cmd == 'asm_comment' || cmd == 'comment') { return 0; }
+	return 1;
+}
+
 function code_arrived(data) {
 	console.log("Done");
-
-	var re_copyfrom = /^\s*COPYFROM/i;
-	var re_copyto = /^\s*COPYTO/i;
-	var re_comment = /^\s*COMMENT/i;
-	var re_inbox = /^\s*INBOX/i;
-	var re_outbox = /^\s*OUTBOX/i;
-	var re_bumpup = /^\s*BUMPUP/i;
-	var re_bumpdown = /^\s*BUMPDOWN/i;
-	var re_jump = /^\s*JUMP/i;
-	var re_jumpz = /^\s*JUMPZ/i;
-	var re_jumpn = /^\s*JUMPN/i;
-	var re_add = /^\s*ADD/i;
-	var re_sub = /^\s*SUB/i;
-	var re_asm_comment = /^\s*--/;
-	var re_jump_dst = /\s*\S+:/;
-
-
 
 	//console.log(this.responseText);
 	//var lines = this.responseText.split(new RegExp('\r?\n'));
@@ -111,35 +132,34 @@ function code_arrived(data) {
 	else if(lines.length > 99) { num_len = 3; } 
 	var line_number = 0;
 	for(var i = 0; i < lines.length; i++) {
-		var text = lines[i];
+		var tokens = tokenize_line(lines[i]);
+		if(tokens[0] == 'blank') { continue; }
+		var newclass = tokens[0];
+		var iscode = is_code(tokens[0]);
 
-		var newclass = 'unknown';
-		var iscode = 1;
-		if(re_copyfrom.test(text)) { newclass = 'copyfrom'; }
-		if(re_copyto.test(text)) { newclass = 'copyto'; }
-		if(re_comment.test(text)) { newclass = 'comment'; iscode=0; }
-		if(re_inbox.test(text)) { newclass = 'inbox'; }
-		if(re_outbox.test(text)) { newclass = 'outbox'; }
-		if(re_bumpup.test(text)) {
-			newclass = 'bumpup';
-			text = text.replace(re_bumpup, 'bump +');
+		var text = newclass;
+		if(text == 'bumpup') { text = 'bump +'; }
+		else if(text == 'bumpdown') { text = 'bump −'; }
+		else if(text == 'asm_comment') {
+			text = tokens[1];
+			tokens = [];
+		} else if(text == 'jumpdst') {
+			text = tokens[1];
+			tokens = [];
 		}
-		if(re_bumpdown.test(text)) {
-			newclass = 'bumpdown';
-			text = text.replace(re_bumpdown, 'bump −');
+
+		var e_cmd = $(document.createElement('span'));
+		e_cmd.text(text);
+		e_cmd.addClass(newclass);
+		e_cmd.addClass('cmd');
+
+		var e_arg = 0;
+		if(tokens.length == 2) {
+			e_arg = $(document.createElement('span'));
+			e_arg.text(tokens[1]);
+			e_arg.addClass(newclass);
+			e_arg.addClass('arg');
 		}
-		if(re_jump.test(text)) { newclass = 'jump'; }
-		if(re_jumpn.test(text)) { newclass = 'jumpn'; }
-		if(re_jumpz.test(text)) { newclass = 'jumpz'; }
-		if(re_jump_dst.test(text)) { newclass = 'jumpdst'; iscode=0; }
-		if(re_add.test(text)) { newclass = 'add'; }
-		if(re_sub.test(text)) { newclass = 'sub'; }
-		if(re_asm_comment.test(text)) { newclass = 'asm_comment'; iscode=0; }
-
-		var new_elem = $(document.createElement('span'));
-		new_elem.text(text);
-		new_elem.attr('class', newclass);
-
 
 		var new_td_num = $(document.createElement('td'));
 		if(iscode) {
@@ -147,10 +167,16 @@ function code_arrived(data) {
 			var linenum = (pad+line_number).slice(-num_len);
 			new_td_num.text(linenum);
 		}
-		new_td_num.attr('class', 'linenum');
+		new_td_num.addClass('linenum');
 
 		var new_td_code = $(document.createElement('td'));
-		new_td_code.append(new_elem);
+		new_td_code.append(e_cmd);
+		console.log(tokens[0]);
+		if(e_arg) {
+			new_td_code.append($(document.createTextNode(' ')));
+			new_td_code.append(e_arg);
+			console.log("   "+tokens[1]);
+		}
 
 		var new_row = $(document.createElement('tr'));
 		new_row.append(new_td_num);
