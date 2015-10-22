@@ -128,13 +128,7 @@ function count_code_lines(lines) {
 	return code_lines;
 }
 
-function code_arrived(data) {
-	console.log("Done");
-
-	//console.log(this.responseText);
-	//var lines = this.responseText.split(new RegExp('\r?\n'));
-	var lines = data.split(new RegExp('\r?\n'));
-	var root = $('#code');
+function append_code_table(root, lines) {
 	var num_len = 2;
 	var pad = "00000";
 	// TODO: This is the wrong way to count lines; many aren't.
@@ -195,6 +189,16 @@ function code_arrived(data) {
 		new_row.append(new_td_code);
 		root.append(new_row);
 	}
+}
+
+function code_arrived(data) {
+	console.log("Done");
+
+	//console.log(this.responseText);
+	//var lines = this.responseText.split(new RegExp('\r?\n'));
+	var root = $('#code');
+	var lines = data.split(new RegExp('\r?\n'));
+	append_code_table(root, lines)
 
 }
 var code = "tests/36-Alphabetizer.size.speed.asm";
