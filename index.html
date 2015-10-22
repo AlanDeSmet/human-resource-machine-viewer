@@ -97,6 +97,8 @@ function code_arrived(data) {
 	var re_asm_comment = /^\s*--/;
 	var re_jump_dst = /\s*\S+:/;
 
+
+
 	//console.log(this.responseText);
 	//var lines = this.responseText.split(new RegExp('\r?\n'));
 	var lines = data.split(new RegExp('\r?\n'));
@@ -109,24 +111,33 @@ function code_arrived(data) {
 	else if(lines.length > 99) { num_len = 3; } 
 	var line_number = 0;
 	for(var i = 0; i < lines.length; i++) {
-		var new_elem = $(document.createElement('span'));
-		new_elem.text(lines[i]);
+		var text = lines[i];
+
 		var newclass = 'unknown';
 		var iscode = 1;
-		if(re_copyfrom.test(lines[i])) { newclass = 'copyfrom'; }
-		if(re_copyto.test(lines[i])) { newclass = 'copyto'; }
-		if(re_comment.test(lines[i])) { newclass = 'comment'; iscode=0; }
-		if(re_inbox.test(lines[i])) { newclass = 'inbox'; }
-		if(re_outbox.test(lines[i])) { newclass = 'outbox'; }
-		if(re_bumpup.test(lines[i])) { newclass = 'bumpup'; }
-		if(re_bumpdown.test(lines[i])) { newclass = 'bumpdown'; }
-		if(re_jump.test(lines[i])) { newclass = 'jump'; }
-		if(re_jumpn.test(lines[i])) { newclass = 'jumpn'; }
-		if(re_jumpz.test(lines[i])) { newclass = 'jumpz'; }
-		if(re_jump_dst.test(lines[i])) { newclass = 'jumpdst'; iscode=0; }
-		if(re_add.test(lines[i])) { newclass = 'add'; }
-		if(re_sub.test(lines[i])) { newclass = 'sub'; }
-		if(re_asm_comment.test(lines[i])) { newclass = 'asm_comment'; iscode=0; }
+		if(re_copyfrom.test(text)) { newclass = 'copyfrom'; }
+		if(re_copyto.test(text)) { newclass = 'copyto'; }
+		if(re_comment.test(text)) { newclass = 'comment'; iscode=0; }
+		if(re_inbox.test(text)) { newclass = 'inbox'; }
+		if(re_outbox.test(text)) { newclass = 'outbox'; }
+		if(re_bumpup.test(text)) {
+			newclass = 'bumpup';
+			text = text.replace(re_bumpup, 'bump +');
+		}
+		if(re_bumpdown.test(text)) {
+			newclass = 'bumpdown';
+			text = text.replace(re_bumpdown, 'bump −');
+		}
+		if(re_jump.test(text)) { newclass = 'jump'; }
+		if(re_jumpn.test(text)) { newclass = 'jumpn'; }
+		if(re_jumpz.test(text)) { newclass = 'jumpz'; }
+		if(re_jump_dst.test(text)) { newclass = 'jumpdst'; iscode=0; }
+		if(re_add.test(text)) { newclass = 'add'; }
+		if(re_sub.test(text)) { newclass = 'sub'; }
+		if(re_asm_comment.test(text)) { newclass = 'asm_comment'; iscode=0; }
+
+		var new_elem = $(document.createElement('span'));
+		new_elem.text(text);
 		new_elem.attr('class', newclass);
 
 
