@@ -113,8 +113,19 @@ function tokenize_line(line) {
 }
 
 function is_code(cmd) {
-	if(cmd == 'jumpdst' || cmd == 'asm_comment' || cmd == 'comment') { return 0; }
+	if(cmd == 'blank' || cmd == 'jumpdst' || cmd == 'asm_comment' || cmd == 'comment') { return 0; }
 	return 1;
+}
+
+function count_code_lines(lines) {
+	var code_lines = 0;
+	for(var i = 0; i < lines.length; i++) {
+		var tokens = tokenize_line(lines[i]);
+		if(is_code(tokens[0])) {
+			code_lines++;
+		}
+	}
+	return code_lines;
 }
 
 function code_arrived(data) {
@@ -127,9 +138,10 @@ function code_arrived(data) {
 	var num_len = 2;
 	var pad = "00000";
 	// TODO: This is the wrong way to count lines; many aren't.
-	if(lines.length > 9999) { num_len = 5; }
-	else if(lines.length > 999) { num_len = 4; }
-	else if(lines.length > 99) { num_len = 3; } 
+	var code_lines = count_code_lines(lines);
+	if(code_lines.length > 9999) { num_len = 5; }
+	else if(code_lines.length > 999) { num_len = 4; }
+	else if(code_lines.length > 99) { num_len = 3; } 
 	var line_number = 0;
 	for(var i = 0; i < lines.length; i++) {
 		var tokens = tokenize_line(lines[i]);
