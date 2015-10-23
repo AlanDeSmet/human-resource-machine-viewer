@@ -264,8 +264,9 @@ function extract_labels(ilines) {
 				body += line;
 				if(i >= ilines.length) { more = 0; }
 			}
-			out.labels[match[1].toLowerCase()][match[2]] = body;
-			//console.log(match[1],"/",match[2],"->",body);
+			var mytype = match[1].toLowerCase();
+			out.labels[mytype][match[2]] = body;
+			//console.log(mytype,">"+match[2]+"->",body);
 		} else {
 			//console.log('miss');
 			out.olines.push(thisline);
@@ -278,8 +279,6 @@ function extract_labels(ilines) {
 function append_code_table(root, lines) {
 	var labels = extract_labels(lines);
 	lines = labels.olines;
-
-
 
 	var num_len = 2;
 	var pad = "00000";
@@ -305,11 +304,26 @@ function append_code_table(root, lines) {
 			text = tokens[1];
 			tokens = [];
 		}
+		
+		var comment_id;
+		if(text == 'comment') {
+			comment_id = tokens[1];
+			if(comment_id in labels.labels['comment']) {
+				text = '';
+				tokens = [];
+			}
+		}
 
 		var e_cmd = $(document.createElement('span'));
 		e_cmd.text(text);
 		e_cmd.addClass(newclass);
 		e_cmd.addClass('cmd');
+
+		if(newclass == "comment") {
+			var svg = new_hrm_label_svg(80, 20, labels.labels['comment'][comment_id]);
+			svg = $(svg);
+			e_cmd.append(svg);
+		}
 
 		var e_arg = 0;
 		if(tokens.length == 2) {
@@ -344,7 +358,7 @@ function append_code_table(root, lines) {
 }
 
 function code_arrived(data) {
-	console.log("Done");
+	console.log("Code downloaded.\n");
 
 	//console.log(this.responseText);
 	//var lines = this.responseText.split(new RegExp('\r?\n'));
