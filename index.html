@@ -49,6 +49,9 @@ h1 {
 .comment svg {
 	vertical-align: middle;
 }
+.arg svg {
+	vertical-align: middle;
+}
 .inbox,.outbox {
 	background-color: #9cb65b;
 	color: #474f2c;
@@ -330,17 +333,29 @@ function append_code_table(root, lines) {
 		e_cmd.addClass('cmd');
 
 		if(newclass == "comment") {
-			var svg = new_hrm_label_svg(70, 20, labels.labels['comment'][comment_id]);
-			svg = $(svg);
-			e_cmd.append(svg);
+			if(comment_id in labels.labels['comment']) {
+				var svg = new_hrm_label_svg(70, 20, labels.labels['comment'][comment_id]);
+				svg = $(svg);
+				e_cmd.append(svg);
+			}
 		}
 
 		var e_arg = 0;
 		if(tokens.length == 2) {
 			e_arg = $(document.createElement('span'));
-			e_arg.text(tokens[1]);
 			e_arg.addClass(newclass);
 			e_arg.addClass('arg');
+			if(/^\d+$/.test(tokens[1])) {
+				if(tokens[1] in labels.labels['label']) {
+					var svg = new_hrm_label_svg(70, 20, labels.labels['label'][tokens[1]]);
+					svg = $(svg);
+					e_arg.append(svg);
+				} else {
+					e_arg.text(tokens[1]);
+				}
+			} else {
+				e_arg.text(tokens[1]);
+			}
 		}
 
 		var new_td_num = $(document.createElement('td'));
