@@ -250,6 +250,10 @@ function append_code_table(root_div, lines) {
 	var labels = extract_labels(lines);
 	lines = labels.olines;
 
+	var dsts = {};
+	var srcs = {};
+
+
 	var num_len = 2;
 	var pad = "00000";
 	// TODO: This is the wrong way to count lines; many aren't.
@@ -289,6 +293,11 @@ function append_code_table(root_div, lines) {
 		e_cmd.addClass(newclass);
 		e_cmd.addClass('cmd');
 
+		if(newclass == 'jumpdst') {
+			dsts[text] = e_cmd;
+		}
+
+
 		if(newclass == "comment") {
 			if(comment_id in labels.labels['comment']) {
 				var svg = new_hrm_label_svg(70, 20, labels.labels['comment'][comment_id]);
@@ -324,6 +333,9 @@ function append_code_table(root_div, lines) {
 				}
 			} else {
 				e_arg.text(tokens[1]);
+			}
+			if(newclass=='jump' || newclass=='jumpn' || newclass=="jumpz") {
+				srcs[tokens[1]] = e_arg;
 			}
 		}
 
