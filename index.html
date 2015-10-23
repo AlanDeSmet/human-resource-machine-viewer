@@ -116,7 +116,6 @@ function new_hrm_label_svg(max_width, height, enclabel) {
 		}
 	}
 
-
 	for(var i = 0; i < list_points.length; i++) {
 		for(var j = 0; j < list_points[i].length; j++) {
 			list_points[i][j][0] = list_points[i][j][0] - min_x;
@@ -127,6 +126,7 @@ function new_hrm_label_svg(max_width, height, enclabel) {
 	}
 
 	var width = ((max_x - min_x)*max_width)/hrm_max + brush_width*4;
+	if(max_x < min_x) { width = max_width; }
 
 	var new_svg = new simple_svg(width,height);
 	new_svg.rect(0,0,width,height,'white');
@@ -363,6 +363,21 @@ function append_code_table(root_div, lines) {
 	}
 
 	root_div.append(root);
+
+/*
+	var table_pos = root.offset();
+	var table_width = root.outerWidth();
+	var table_height = root.outerHeight();
+	console.log(table_width, table_height);
+
+*/
+	/*
+	var new_svg = new simple_svg(table_width, table_height);
+	new_svg.rect(0,0,table_width,table_height, 'green');
+	root_div.append(new_svg);
+	*/
+	
+
 }
 
 function code_arrived(data) {
