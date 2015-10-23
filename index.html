@@ -8,10 +8,8 @@
 <body>
 <h1>Human Resource Machine Program Viewer</h1>
 
-
-<table id="code">
-</table>
-<!-- <button onclick="mycode()">run</button> -->
+<div class="hrmcode" id="code">
+</div>
 
 <div class="footer">Human Resource Machine Program Viewer ©2015 Alan De Smet</div>
 
@@ -208,7 +206,9 @@ function extract_labels(ilines) {
 	return out;
 }
 
-function append_code_table(root, lines) {
+function append_code_table(root_div, lines) {
+
+	var root = $(document.createElement('table'));
 	
 	if(lines[0] == "-- HUMAN RESOURCE MACHINE PROGRAM --") { lines.shift(); }
 
@@ -315,6 +315,8 @@ function append_code_table(root, lines) {
 		new_row.append(new_td_code);
 		root.append(new_row);
 	}
+
+	root_div.append(root);
 }
 
 function code_arrived(data) {

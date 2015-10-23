@@ -5,9 +5,6 @@
 }
 body {
 	font-family: 'Passion One', sans-serif, Impact;
-	font-size: 130%;
-	background-color: #bca08b;
-	color: black;
 }
 h1,h2,h3,h4 {
 	font-weight: normal;
@@ -18,16 +15,23 @@ h1 {
 	margin-bottom: 0.3em;
 	margin-left: 1em;
 }
-#code {
+
+.hrmcode {
+	font-family: 'Passion One', sans-serif, Impact;
+	font-size: 130%;
+	background-color: #bca08b;
+	color: black;
+}
+.hrmcode table {
 	border-collapse: collapse;
 }
-#code div {
+.hrmcode div {
 	margin: .3em;
 }
-#code td {
+.hrmcode td {
 	padding: 0.3em;
 }
-#code span {
+.hrmcode span {
 	text-transform: lowercase;
 	padding: 0.1em 0.5em;
 	border-radius: 0.1em;
