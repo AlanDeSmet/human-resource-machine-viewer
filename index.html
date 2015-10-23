@@ -140,54 +140,47 @@ function simple_svg(width, height) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function new_hrm_label_svg(width, height, enclabel) {
+function new_hrm_label_svg(max_width, height, enclabel) {
 
-	var brush_width = Math.min(width,height)/10;
-	//console.log("========",stri,"========");
-	//console.log("base64:",enclabel.length, enclabel);
+	var brush_width = Math.min(max_width,height)/10;
 	var zlib = window.atob(enclabel);
 	var zlibu8 = new Uint8Array(zlib.length);
 	for(var i = 0; i < zlib.length; i++) {
 		zlibu8[i] = zlib.charCodeAt(i);
 	}
-	//console.log("zlib:", zlib.length, zlib);
-	
-	/*
-	var zlibu8_debug = "";
-	for(var i = 0; i < zlibu8.length; i++) {
-		zlibu8_debug += zlibu8[i] + " ";
-	}
-	console.log("zlib uint8", zlibu8.length, zlibu8_debug);
-	*/
 	var raw = pako.inflate(zlibu8);
-	//console.log("raw", raw.length, raw);
 
-	var new_svg = new simple_svg(width,height);
-	new_svg.rect(0,0,width,height,'white');
 
 	var dv = new DataView(raw.buffer);
 	var elements = dv.getUint16(0, true);
 	var points = [];
+	var list_points = [];
 	for(var i = 0; i < elements && (i*4+6)<= raw.length; i++) {
 		var index = i*4+4;
 		var x = dv.getUint16(index, true);
 		var y = dv.getUint16(index+2, true);
 		if(x == 0 && y == 0) {
-			if(points.length == 0) {
-			} else if(points.length == 1) {
-				new_svg.circle(points[0][0], points[0][1], brush_width, 'black');
-			} else {
-				new_svg.polyline(points, brush_width, 'black');
-			}
+			list_points.push(points);
 			points = [];
 		} else {
-			x = rescale_label(x, 65535, width);
+			x = rescale_label(x, 65535, max_width);
 			y = rescale_label(y, 65535, height);
 			points.push([x,y]);
 		}
-		//console.log(i,".",x,y);
 	}
-	//console.log("END");
+
+	var new_svg = new simple_svg(max_width,height);
+	new_svg.rect(0,0,max_width,height,'white');
+	for(var i = 0; i < list_points.length; i++) {
+		var points = list_points[i];
+		if(points.length == 0) {
+		} else if(points.length == 1) {
+			new_svg.circle(points[0][0], points[0][1], brush_width, 'black');
+		} else {
+			new_svg.polyline(points, brush_width, 'black');
+		}
+	}
+
 	return new_svg.svg;
 }
 
