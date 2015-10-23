@@ -383,7 +383,7 @@ function append_code_table(root_div, lines) {
 	//table_width = 300;
 	//table_height = 50;
 
-	var new_svg = new simple_svg(table_width, table_height);
+	var new_svg = new simple_svg(table_width + 400, table_height);
 	console.log(new_svg);
 	//new_svg.rect(0,0,table_width,table_height, 'green');
 	var offset_left = root_div.offset().left;
@@ -395,7 +395,9 @@ function append_code_table(root_div, lines) {
 			console.log(src.offset().left, src.offset().top, dst.offset().left, dst.offset().top);
 			var start = [src.offset().left-offset_left, src.offset().top-offset_top];
 			var end = [dst.offset().left-offset_left, dst.offset().top-offset_top];
-			var path_cmd = ["M", start[0], start[1], "L", end[0], end[1]].join(" ");
+			var mid_x = Math.max(start[0], end[0]) + 200;
+			var mid_y = (start[1] + end[1]) / 2;
+			var path_cmd = ["M", start[0], start[1], "L", mid_x, mid_y, "L", end[0], end[1]].join(" ");
 			new_svg.path(path_cmd,4,'green');
 		} else {
 			console.log("jump label", label, "lacks a matching destination");
