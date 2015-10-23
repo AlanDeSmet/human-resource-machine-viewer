@@ -277,6 +277,9 @@ function extract_labels(ilines) {
 }
 
 function append_code_table(root, lines) {
+	
+	if(lines[0] == "-- HUMAN RESOURCE MACHINE PROGRAM --") { lines.shift(); }
+
 	var labels = extract_labels(lines);
 	lines = labels.olines;
 
