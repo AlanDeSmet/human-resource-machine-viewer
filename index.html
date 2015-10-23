@@ -392,11 +392,13 @@ function append_code_table(root_div, lines) {
 		var src = srcs[label];
 		if(label in dsts) {
 			var dst = dsts[label];
-			console.log(src.offset().left, src.offset().top, dst.offset().left, dst.offset().top);
-			var startx = src.offset().left-offset_left;
-			var starty = src.offset().top-offset_top;
-			var endx = dst.offset().left-offset_left;
-			var endy = dst.offset().top-offset_top;
+
+			var startx = src.offset().left-offset_left + src.outerWidth();
+			var starty = src.offset().top-offset_top + src.outerHeight()/2;
+
+			var endx = dst.offset().left-offset_left + dst.outerWidth();
+			var endy = dst.offset().top-offset_top + dst.outerHeight()/2;
+
 			var mid_x = Math.max(startx, endx) + 200;
 			var mid_y = (starty + endy) / 2;
 			var bcurve_y = (starty - endy) / 2;
