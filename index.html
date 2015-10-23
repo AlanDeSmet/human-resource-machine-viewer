@@ -397,7 +397,15 @@ function append_code_table(root_div, lines) {
 			var end = [dst.offset().left-offset_left, dst.offset().top-offset_top];
 			var mid_x = Math.max(start[0], end[0]) + 200;
 			var mid_y = (start[1] + end[1]) / 2;
-			var path_cmd = ["M", start[0], start[1], "L", mid_x, mid_y, "L", end[0], end[1]].join(" ");
+			var bcurve_y = (start[1] - end[1]) / 2;
+			var path_cmd = ["M", start[0], start[1],
+				"C", start[0] + 20, start[1],
+					mid_x, mid_y + bcurve_y,
+					mid_x, mid_y,
+				"C", mid_x, mid_y - bcurve_y,
+					end[0] + 20, end[1],
+					end[0], end[1]
+					].join(" ");
 			new_svg.path(path_cmd,4,'green');
 		} else {
 			console.log("jump label", label, "lacks a matching destination");
