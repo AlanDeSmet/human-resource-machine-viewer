@@ -99,6 +99,9 @@ function new_hrm_label_svg(max_width, height, enclabel) {
 	var elements = dv.getUint16(0, true);
 	var points = [];
 	var list_points = [];
+
+	var min_x = hrm_max;
+	var max_x = 0;
 	for(var i = 0; i < elements && (i*4+6)<= raw.length; i++) {
 		var index = i*4+4;
 		var x = dv.getUint16(index, true);
@@ -108,18 +111,25 @@ function new_hrm_label_svg(max_width, height, enclabel) {
 			points = [];
 		} else {
 			points.push([x,y]);
+			max_x = Math.max(max_x, x);
+			min_x = Math.min(min_x, x);
 		}
 	}
 
+
 	for(var i = 0; i < list_points.length; i++) {
 		for(var j = 0; j < list_points[i].length; j++) {
-			list_points[i][j][0] = rescale_label(list_points[i][j][0], hrm_max, max_width);
+			list_points[i][j][0] = list_points[i][j][0] - min_x;
+			list_points[i][j][0] =
+			rescale_label(list_points[i][j][0], hrm_max, max_width) + brush_width*2;
 			list_points[i][j][1] = rescale_label(list_points[i][j][1], hrm_max, height);
 		}
 	}
 
-	var new_svg = new simple_svg(max_width,height);
-	new_svg.rect(0,0,max_width,height,'white');
+	var width = ((max_x - min_x)*max_width)/hrm_max + brush_width*4;
+
+	var new_svg = new simple_svg(width,height);
+	new_svg.rect(0,0,width,height,'white');
 	for(var i = 0; i < list_points.length; i++) {
 		var points = list_points[i];
 		if(points.length == 0) {
