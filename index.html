@@ -294,7 +294,6 @@ function append_code_table(root_div, lines) {
 				} else {
 					e_arg.text(tokens[1]);
 				}
-			//} else if(tmp = /^\s*(\d+)/.exec(tokens[1])) {
 			} else if(tmp = /\[(\d+)\]/.exec(tokens[1])) {
 				var num = tmp[1];
 				if(num in labels.labels['label']) {
@@ -340,8 +339,6 @@ function append_code_table(root_div, lines) {
 function code_arrived(data) {
 	console.log("Code downloaded.\n");
 
-	//console.log(this.responseText);
-	//var lines = this.responseText.split(new RegExp('\r?\n'));
 	var root = $('#code');
 	var lines = data.split(new RegExp('\r?\n'));
 	append_code_table(root, lines)
@@ -352,16 +349,6 @@ var code = "tests/36-Alphabetizer.size.speed.asm";
 // TODO: Why logging a syntax error? I'm specifying text.
 $.get(code, code_arrived, "text")
 
-//var codereq = new XMLHttpRequest();
-//codereq.overrideMimeType('text/plain');
-//codereq.addEventListener("load", code_arrived);
-////codereq.addEventListener("error", function(){console.log("error")});
-////codereq.addEventListener("abort", function(){console.log("abort")});
-////codereq.addEventListener("progress", function(o){console.log("progress", o.loaded, o.total)});
-//console.log("Getting", code);
-//codereq.open("GET", code);
-//codereq.send()
-//console.log("Request out");
 </script>
 </body>
 </html>
