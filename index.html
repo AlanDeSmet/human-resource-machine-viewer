@@ -92,6 +92,8 @@ function new_hrm_label_svg(max_width, height, enclabel) {
 	}
 	var raw = pako.inflate(zlibu8);
 
+	var hrm_max = 65535;
+
 
 	var dv = new DataView(raw.buffer);
 	var elements = dv.getUint16(0, true);
@@ -105,9 +107,14 @@ function new_hrm_label_svg(max_width, height, enclabel) {
 			list_points.push(points);
 			points = [];
 		} else {
-			x = rescale_label(x, 65535, max_width);
-			y = rescale_label(y, 65535, height);
 			points.push([x,y]);
+		}
+	}
+
+	for(var i = 0; i < list_points.length; i++) {
+		for(var j = 0; j < list_points[i].length; j++) {
+			list_points[i][j][0] = rescale_label(list_points[i][j][0], hrm_max, max_width);
+			list_points[i][j][1] = rescale_label(list_points[i][j][1], hrm_max, height);
 		}
 	}
 
