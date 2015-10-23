@@ -79,6 +79,16 @@ function simple_svg(width, height) {
 		e.setAttribute('stroke-width', width);
 		this.svg.appendChild(e);
 	}
+
+	this.path = function(command, width, color) {
+		var e = this.new_el('path');
+		e.setAttribute('d', command);
+		//e.setAttribute('stroke-linecap', 'round');
+		e.setAttribute('stroke', color);
+		e.setAttribute('fill', 'transparent');
+		e.setAttribute('stroke-width', width);
+		this.svg.appendChild(e);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -385,7 +395,8 @@ function append_code_table(root_div, lines) {
 			console.log(src.offset().left, src.offset().top, dst.offset().left, dst.offset().top);
 			var start = [src.offset().left-offset_left, src.offset().top-offset_top];
 			var end = [dst.offset().left-offset_left, dst.offset().top-offset_top];
-			new_svg.polyline([start,end],4,'green');
+			var path_cmd = ["M", start[0], start[1], "L", end[0], end[1]].join(" ");
+			new_svg.path(path_cmd,4,'green');
 		} else {
 			console.log("jump label", label, "lacks a matching destination");
 		}
