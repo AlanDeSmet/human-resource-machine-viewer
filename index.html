@@ -80,13 +80,14 @@ function simple_svg(width, height) {
 		this.svg.appendChild(e);
 	}
 
-	this.path = function(command, width, color) {
+	this.path = function(command, thisclass) {
 		var e = this.new_el('path');
 		e.setAttribute('d', command);
 		//e.setAttribute('stroke-linecap', 'round');
-		e.setAttribute('stroke', color);
+		//e.setAttribute('stroke', color);
+		e.setAttribute('class', thisclass);
 		e.setAttribute('fill', 'transparent');
-		e.setAttribute('stroke-width', width);
+		//e.setAttribute('stroke-width', width);
 		this.svg.appendChild(e);
 	}
 }
@@ -410,7 +411,7 @@ function append_code_table(root_div, lines) {
 					endx + 20, endy,
 					endx, endy
 					].join(" ");
-			new_svg.path(path_cmd,4,'green');
+			new_svg.path(path_cmd,'jumppath');
 		} else {
 			console.log("jump label", label, "lacks a matching destination");
 		}

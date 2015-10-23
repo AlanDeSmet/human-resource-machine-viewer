@@ -64,3 +64,7 @@
 	background-color: #a48a78;
 	color: #7b6456;
 }
+.hrmcode .jumppath {
+	stroke: #8d8dc1;
+	stroke-width: 0.3em;
+}
