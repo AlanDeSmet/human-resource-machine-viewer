@@ -46,6 +46,9 @@ h1 {
 	background-color: #ddd6b5;
 	color: black;
 }
+.comment svg {
+	vertical-align: middle;
+}
 .inbox,.outbox {
 	background-color: #9cb65b;
 	color: #474f2c;
@@ -327,7 +330,7 @@ function append_code_table(root, lines) {
 		e_cmd.addClass('cmd');
 
 		if(newclass == "comment") {
-			var svg = new_hrm_label_svg(80, 20, labels.labels['comment'][comment_id]);
+			var svg = new_hrm_label_svg(70, 20, labels.labels['comment'][comment_id]);
 			svg = $(svg);
 			e_cmd.append(svg);
 		}
