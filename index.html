@@ -66,6 +66,7 @@ td.linenum {
 	color: #7b6456;
 }
 </style>
+<script src="pako_inflate.min.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 </head>
 <body>
@@ -79,6 +80,115 @@ td.linenum {
 <div class="footer">©2015 Alan De Smet</div>
 
 <script>
+
+////////////////////////////////////////////////////////////////////////////////
+function simple_svg(width, height) {
+	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	svg.setAttribute('version', '1.1');
+	svg.setAttribute('baseProfile', 'full');
+	svg.setAttribute('width', width);
+	svg.setAttribute('height', height);
+	svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+	this.svg = svg;
+
+	this.new_el = function(name) {
+		return document.createElementNS(this.svg.namespaceURI,name);
+	}
+
+	this.rect = function(x,y,width,height, color) {
+		var e = this.new_el('rect');
+		e.setAttribute('x',x);
+		e.setAttribute('y',y);
+		e.setAttribute('width',width);
+		e.setAttribute('height',height);
+		e.setAttribute('fill',color);
+		this.svg.appendChild(e);
+	}
+
+	this.circle = function(x, y, radius, color) {
+		var e = this.new_el('circle');
+		e.setAttribute('cx',x);
+		e.setAttribute('cy',y);
+		e.setAttribute('r',radius);
+		e.setAttribute('fill',color);
+		this.svg.appendChild(e);
+	}
+
+	this.polyline = function(points, width, color) {
+		var e = this.new_el('polyline');
+		var pts = "";
+		for(var i = 0; i < points.length; i++) {
+			pts += points[i][0] + " " + points[i][1] + " ";
+		}
+		e.setAttribute('points', pts);
+		e.setAttribute('stroke-linecap', 'round');
+		e.setAttribute('stroke', color);
+		e.setAttribute('fill', 'transparent');
+		e.setAttribute('stroke-width', width);
+		this.svg.appendChild(e);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+function new_hrm_label_svg(width, height, enclabel) {
+
+	var brush_width = Math.min(width,height)/10;
+	//console.log("========",stri,"========");
+	//console.log("base64:",enclabel.length, enclabel);
+	var zlib = window.atob(enclabel);
+	var zlibu8 = new Uint8Array(zlib.length);
+	for(var i = 0; i < zlib.length; i++) {
+		zlibu8[i] = zlib.charCodeAt(i);
+	}
+	//console.log("zlib:", zlib.length, zlib);
+	
+	/*
+	var zlibu8_debug = "";
+	for(var i = 0; i < zlibu8.length; i++) {
+		zlibu8_debug += zlibu8[i] + " ";
+	}
+	console.log("zlib uint8", zlibu8.length, zlibu8_debug);
+	*/
+	var raw = pako.inflate(zlibu8);
+	//console.log("raw", raw.length, raw);
+
+	var new_svg = new simple_svg(width,height);
+	new_svg.rect(0,0,width,height,'white');
+
+	var dv = new DataView(raw.buffer);
+	var elements = dv.getUint16(0, true);
+	var points = [];
+	for(var i = 0; i < elements && (i*4+6)<= raw.length; i++) {
+		var index = i*4+4;
+		var x = dv.getUint16(index, true);
+		var y = dv.getUint16(index+2, true);
+		if(x == 0 && y == 0) {
+			if(points.length == 0) {
+			} else if(points.length == 1) {
+				new_svg.circle(points[0][0], points[0][1], brush_width, 'black');
+			} else {
+				new_svg.polyline(points, brush_width, 'black');
+			}
+			points = [];
+		} else {
+			x = rescale_label(x, 65535, width);
+			y = rescale_label(y, 65535, height);
+			points.push([x,y]);
+		}
+		//console.log(i,".",x,y);
+	}
+	//console.log("END");
+	return new_svg.svg;
+}
+
+function rescale_label(x, oldmax, newmax) {
+	return x * newmax / oldmax;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+
 var re_asm_comment = /^--/;
 var re_jump_dst = /^(\S+):/;
 
@@ -128,7 +238,49 @@ function count_code_lines(lines) {
 	return code_lines;
 }
 
+function extract_labels(ilines) {
+	var out = {};
+	out.olines = [];
+	out.labels = {};
+	out.labels['comment'] = {};
+	out.labels['label'] = {};
+	var re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
+	for(var i = 0; i < ilines.length; i++) {
+		var thisline = ilines[i];
+		//console.log(i,thisline);
+		if(match = re_define.exec(thisline)) {
+			//console.log('hit');
+			var body = '';
+			var more = 1;
+			while(more) {
+				i++;
+				var line = ilines[i];
+				line = line.replace(/^\s+/, '');
+				line = line.replace(/\s+$/, '');
+				if(/;$/.test(line)) {
+					line = line.replace(/;$/, '');
+					more = 0;
+				}
+				body += line;
+				if(i >= ilines.length) { more = 0; }
+			}
+			out.labels[match[1].toLowerCase()][match[2]] = body;
+			//console.log(match[1],"/",match[2],"->",body);
+		} else {
+			//console.log('miss');
+			out.olines.push(thisline);
+		}
+	}
+
+	return out;
+}
+
 function append_code_table(root, lines) {
+	var labels = extract_labels(lines);
+	lines = labels.olines;
+
+
+
 	var num_len = 2;
 	var pad = "00000";
 	// TODO: This is the wrong way to count lines; many aren't.
@@ -177,11 +329,11 @@ function append_code_table(root, lines) {
 
 		var new_td_code = $(document.createElement('td'));
 		new_td_code.append(e_cmd);
-		console.log(tokens[0]);
+		//console.log(tokens[0]);
 		if(e_arg) {
 			new_td_code.append($(document.createTextNode(' ')));
 			new_td_code.append(e_arg);
-			console.log("   "+tokens[1]);
+			//console.log("   "+tokens[1]);
 		}
 
 		var new_row = $(document.createElement('tr'));
