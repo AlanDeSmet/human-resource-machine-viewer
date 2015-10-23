@@ -201,6 +201,10 @@ function rescale_label(x, oldmax, newmax) {
 
 var re_asm_comment = /^--/;
 var re_jump_dst = /^(\S+):/;
+var re_whitespace = /\s+/;
+var re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
+var re_memory_addr = /^\d+$/;
+var re_memory_indirect = /^\[(d+)\]$/;
 
 function tokenize_line(line) {
 	var match;
@@ -212,7 +216,7 @@ function tokenize_line(line) {
 	if(match = re_jump_dst.exec(line)) { return ['jumpdst', match[1]]; }
 	if(re_asm_comment.test(line)) { return ['asm_comment', line]; }
 
-	var tokens = line.split(/\s+/);
+	var tokens = line.split(re_whitespace);
 
 	var cmd = tokens[0].toLowerCase();
 
@@ -254,7 +258,6 @@ function extract_labels(ilines) {
 	out.labels = {};
 	out.labels['comment'] = {};
 	out.labels['label'] = {};
-	var re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
 	for(var i = 0; i < ilines.length; i++) {
 		var thisline = ilines[i];
 		//console.log(i,thisline);
@@ -345,7 +348,7 @@ function append_code_table(root, lines) {
 			e_arg = $(document.createElement('span'));
 			e_arg.addClass(newclass);
 			e_arg.addClass('arg');
-			if(/^\d+$/.test(tokens[1])) {
+			if(re_memory_addr.test(tokens[1])) {
 				if(tokens[1] in labels.labels['label']) {
 					var svg = new_hrm_label_svg(70, 20, labels.labels['label'][tokens[1]]);
 					svg = $(svg);
