@@ -393,18 +393,20 @@ function append_code_table(root_div, lines) {
 		if(label in dsts) {
 			var dst = dsts[label];
 			console.log(src.offset().left, src.offset().top, dst.offset().left, dst.offset().top);
-			var start = [src.offset().left-offset_left, src.offset().top-offset_top];
-			var end = [dst.offset().left-offset_left, dst.offset().top-offset_top];
-			var mid_x = Math.max(start[0], end[0]) + 200;
-			var mid_y = (start[1] + end[1]) / 2;
-			var bcurve_y = (start[1] - end[1]) / 2;
-			var path_cmd = ["M", start[0], start[1],
-				"C", start[0] + 20, start[1],
+			var startx = src.offset().left-offset_left;
+			var starty = src.offset().top-offset_top;
+			var endx = dst.offset().left-offset_left;
+			var endy = dst.offset().top-offset_top;
+			var mid_x = Math.max(startx, endx) + 200;
+			var mid_y = (starty + endy) / 2;
+			var bcurve_y = (starty - endy) / 2;
+			var path_cmd = ["M", startx, starty,
+				"C", startx + 20, starty,
 					mid_x, mid_y + bcurve_y,
 					mid_x, mid_y,
 				"C", mid_x, mid_y - bcurve_y,
-					end[0] + 20, end[1],
-					end[0], end[1]
+					endx + 20, endy,
+					endx, endy
 					].join(" ");
 			new_svg.path(path_cmd,4,'green');
 		} else {
