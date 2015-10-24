@@ -1,0 +1,27 @@
+- Fix bad offset on initial load problem!
+
+- Don't lowercase asm_comment.
+
+- Y-axis trimming on labels.
+
+- Make comments look more like HRM
+
+- If a label (jumpdst) has nothing jumping to it, delete it.
+
+- If a jump has no matching label (jumpdst), show the label's name.
+
+- Hovering over a jumpdst should show the label's name.
+
+- Hovering over a jump should cause the argument with the label to show.
+
+- Hovering over a jump, jumpdst, or the jump line should highlight all three.
+
+- Set alt text for memory labels so a copy/paste is reasonableish
+
+- Arc algorithm, gives pretty square corners for very short jumps and very flat ones for long jumps. How I calculate the control points should change.  Perhaps I do want quadratic curves instead of cubic?
+
+- Collapse all of hrm.js into a single object interface to minimize namespace pollution.
+
+- Cleanup hrm.js.
+
+- The load of the program causes a "syntax error" in the console log. I think it's because Firefox (possibly via jQuery) tried to parse it as JSON or XML. May just be jQuery trying to autodetect and nothing we can do about it.
