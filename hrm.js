@@ -153,7 +153,6 @@ function new_hrm_label_svg(max_width, height, enclabel) {
 	if(max_x < min_x) { width = max_width; }
 
 	var new_svg = new simple_svg(width,height);
-	new_svg.rect(0,0,width,height,'white');
 	for(var i = 0; i < list_points.length; i++) {
 		var points = list_points[i];
 		if(points.length == 0) {
@@ -408,7 +407,7 @@ this.append_code_table = function(id, data) {
 
 		if(newclass == "comment") {
 			if(comment_id in labels.labels['comment']) {
-				var svg = new_hrm_label_svg(70, 20, labels.labels['comment'][comment_id]);
+				var svg = new_hrm_label_svg(140, 40, labels.labels['comment'][comment_id]);
 				svg = $(svg);
 				e_cmd.append(svg);
 			}
