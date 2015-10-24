@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <title>Human Resource Machine Program Viewer</title>
-<link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
 <script src="pako_inflate.min.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <link href="hrm.css" rel="stylesheet">
@@ -59,12 +59,13 @@ available.</a>
 <h2>Usage</h2>
 
 <p>Step 1: Add the following to your web page's &lt;head&gt;.
-The inclusion of Passion One via Google Fonts is optional, but
-the default CSS (hrm.css) relies on it.  Passion One is a rough
+The inclusion of webfont.js is optional but the default
+configuration loads the Passion One font using it.
+Passion One is a rough
 match for the font used in HRM.
 
 <pre>
-&lt;link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"&gt;&lt;/script&gt;
 &lt;script src="pako_inflate.min.js"&gt;&lt;/script&gt;
 &lt;script src="https://code.jquery.com/jquery-2.1.4.min.js"&gt;&lt;/script&gt;
 &lt;link href="hrm.css" rel="stylesheet"&gt;
@@ -79,32 +80,22 @@ It should have a class of hrmcode and a unique id.
 &lt;/div&gt;
 </pre>
 
-<p>Step 3: Select 3a (the simple route) or 3b (the complex
-route).
-
-<p>Step 3a (simple): Add the following code, passing in the id
-for your div and the URL to the code:
+<p>Step 3: Add the following code, passing in the id
+for your div and the URL to the code.  The complexity is
+necessary to ensure that the Passion One font is loaded before
+the code is drawn; if the font loads after the code the jump
+arrows will be misaligned.
 <pre>
 &lt;script&gt;
-var hrmv = new hrm_viewer();
-hrmv.download_and_append_code_table('code', "simple.asm");
-&lt;/script&gt;
-</pre>
-
-<p>Step 3b (complex): Arrange to get a string containing the HRM program.
-Call "append_code_table(root, data)" where root is the element
-you created to hold the code and data is the string holding the
-code.  If, for example, the code is on your web server, you could
-use something like this.
-
-<pre>
-&lt;script&gt;
-function code_arrived(data) {
+function fonts_loaded() {
 	var hrmv = new hrm_viewer();
-	hrmv.append_code_table($('#code'), data);
+	hrmv.download_and_append_code_table('code', "simple.asm");
 }
-var code = "tests/36-Alphabetizer.size.speed.asm";
-$.get(code, code_arrived, "text")
+WebFont.load({
+	google: { families: ['Passion One'] },
+	active: fonts_loaded,
+	inactive: fonts_loaded,
+});
 &lt;/script&gt;
 </pre>
 
@@ -114,8 +105,15 @@ $.get(code, code_arrived, "text")
 <div class="footer">Human Resource Machine Program Viewer ©2015 Alan De Smet</div>
 
 <script>
-var hrmv = new hrm_viewer();
-hrmv.download_and_append_code_table('code', "simple.asm");
+function fonts_loaded() {
+	var hrmv = new hrm_viewer();
+	hrmv.download_and_append_code_table('code', "simple.asm");
+}
+WebFont.load({
+	google: { families: ['Passion One'] },
+	active: fonts_loaded,
+	inactive: fonts_loaded,
+});
 </script>
 </body>
 </html>
