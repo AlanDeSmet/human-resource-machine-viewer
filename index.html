@@ -11,16 +11,14 @@
 	color: #888;
 }
 body {
-	font-family: 'Passion One', sans-serif, Impact;
+	font-family: sans-serif;
 }
 h1,h2,h3,h4 {
 	font-weight: normal;
+	font-family: 'Passion One', sans-serif, Impact;
 }
-h1 {
-	color: #9c8171;
-	margin-top: 0.3em;
-	margin-bottom: 0.3em;
-	margin-left: 1em;
+pre {
+	margin-left: 2em;
 }
 </style>
 </head>
@@ -46,8 +44,62 @@ along with human-resource-machine-view.  If not, see
 -->
 <h1>Human Resource Machine Program Viewer</h1>
 
+<p>The Human Resource Machine Program Viewer is a Javascript
+program to read Human Resource Machine (HRM) programs and display
+them similarly to how HRM itself does.
+
+<h2>Example</h2>
 <div class="hrmcode" id="code">
 </div>
+
+<h2>Usage</h2>
+
+<p>Step 1: Add the following to your web page's &lt;head&gt;.
+The inclusion of Passion One via Google Fonts is optional, but
+the default CSS (hrm.css) relies on it.  Passion One is a rough
+match for the font used in HRM.
+
+<pre>
+&lt;link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'&gt;
+&lt;script src="pako_inflate.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://code.jquery.com/jquery-2.1.4.min.js"&gt;&lt;/script&gt;
+&lt;link href="hrm.css" rel="stylesheet"&gt;
+&lt;script src="hrm.js"&gt;&lt;/script&gt;
+</pre>
+
+<p>Step 2: Create a location for the code to be displayed in your body.
+It should have a class of hrmcode and a unique id.
+
+<pre>
+&lt;div class="hrmcode" id="code"&gt;
+&lt;/div&gt;
+</pre>
+
+<p>Step 3: Arrange to get a string containing the HRM program.
+Call "append_code_table(root, data)" where root is the element
+you created to hold the code and data is the string holding the
+code.  If, for example, the code is on your web server, you could
+use something like this.
+
+
+<pre>
+&lt;script&gt;
+function code_arrived(data) {
+	console.log("Code downloaded.\n");
+
+	var root = $('#code');
+	append_code_table(root, data);
+
+}
+var code = "tests/36-Alphabetizer.size.speed.asm";
+
+// TODO: Why logging a syntax error? I'm specifying text.
+$.get(code, code_arrived, "text")
+&lt;/script&gt;
+</pre>
+
+<p>Step 4: Optionally adjust hrm.css to adjust the formatting.
+
 
 <div class="footer">Human Resource Machine Program Viewer ©2015 Alan De Smet</div>
 
@@ -55,11 +107,8 @@ along with human-resource-machine-view.  If not, see
 
 function code_arrived(data) {
 	console.log("Code downloaded.\n");
-
 	var root = $('#code');
-	var lines = data.split(new RegExp('\r?\n'));
-	append_code_table(root, data)
-
+	append_code_table(root, data);
 }
 var code = "tests/36-Alphabetizer.size.speed.asm";
 
