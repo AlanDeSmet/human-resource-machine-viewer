@@ -31,5 +31,3 @@
 - Give the label SVG's lines a class to set the color.
 
 - Simplify interface, it should just take an id.
-
-- Offer interface to hand an id and a URL.

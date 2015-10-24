@@ -108,17 +108,7 @@ $.get(code, code_arrived, "text")
 <div class="footer">Human Resource Machine Program Viewer ©2015 Alan De Smet</div>
 
 <script>
-
-function code_arrived(data) {
-	console.log("Code downloaded.\n");
-	var root = $('#code');
-	append_code_table(root, data);
-}
-var code = "simple.asm";
-
-// TODO: Why logging a syntax error? I'm specifying text.
-$.get(code, code_arrived, "text")
-
+download_and_append_code_table('code', "simple.asm");
 </script>
 </body>
 </html>

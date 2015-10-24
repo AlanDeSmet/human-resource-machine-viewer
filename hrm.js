@@ -484,3 +484,13 @@ function append_code_table(root_div, data) {
 	root_div.append(svg);
 }
 
+function download_and_append_code_table(id, url) {
+	function code_arrived(data) {
+		console.log("Code downloaded.\n");
+		var root = $('#'+id);
+		append_code_table(root, data);
+	}
+	$.get(url, code_arrived, "text")
+}
+
+
