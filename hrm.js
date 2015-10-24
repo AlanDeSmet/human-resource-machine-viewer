@@ -266,8 +266,9 @@ function extract_labels(ilines) {
 function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts) {
 	var new_svg = new simple_svg(width, height);
 	//new_svg.rect(0,0,table_width,table_height, 'green');
-	for (var label in srcs) {
-		var src = srcs[label];
+	for(var i = 0; i < srcs.length; i++) {
+		var label = srcs[i][0];
+		var src = srcs[i][1];
 		if(label in dsts) {
 			var dst = dsts[label];
 
@@ -309,7 +310,7 @@ function append_code_table(root_div, data) {
 	lines = labels.olines;
 
 	var dsts = {};
-	var srcs = {};
+	var srcs = [];
 
 
 	var num_len = 2;
@@ -393,7 +394,7 @@ function append_code_table(root_div, data) {
 				e_arg.text(tokens[1]);
 			}
 			if(newclass=='jump' || newclass=='jumpn' || newclass=="jumpz") {
-				srcs[tokens[1]] = e_arg;
+				srcs.push([tokens[1],e_arg]);
 			}
 		}
 
