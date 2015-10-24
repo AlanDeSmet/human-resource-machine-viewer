@@ -342,7 +342,8 @@ function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts)
 	return new_svg.svg;
 }
 
-this.append_code_table = function(root_div, data) {
+this.append_code_table = function(id, data) {
+	var root_div = $('#'+id);
 
 	var lines = data.split(new RegExp('\r?\n'));
 
@@ -489,9 +490,7 @@ this.append_code_table = function(root_div, data) {
 this.download_and_append_code_table = function (id, url) {
 	var t = this;
 	function code_arrived(data) {
-		//console.log("Code downloaded.\n");
-		var root = $('#'+id);
-		t.append_code_table(root, data);
+		t.append_code_table(id, data);
 	}
 	$.get(url, code_arrived, "text")
 }
