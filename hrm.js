@@ -373,6 +373,7 @@ function append_code_table(root_div, data) {
 		var iscode = is_code(tokens[0]);
 
 		var text = newclass;
+		var jmpdst;
 		if(text == 'bumpup') { text = 'bump +'; }
 		else if(text == 'bumpdown') { text = 'bump −'; }
 		else if(text == 'asm_comment') {
@@ -380,6 +381,9 @@ function append_code_table(root_div, data) {
 			tokens = [];
 		} else if(text == 'jumpdst') {
 			text = tokens[1];
+			tokens = [];
+		} else if(text == 'jump' || text == 'jumpn' || text == 'jumpz') {
+			jmpdst = tokens[1];
 			tokens = [];
 		}
 		
@@ -438,9 +442,9 @@ function append_code_table(root_div, data) {
 			} else {
 				e_arg.text(tokens[1]);
 			}
-			if(newclass=='jump' || newclass=='jumpn' || newclass=="jumpz") {
-				srcs.push({dst:tokens[1], el:e_arg});
-			}
+		}
+		if(newclass=='jump' || newclass=='jumpn' || newclass=="jumpz") {
+			srcs.push({dst:jmpdst, el:e_cmd});
 		}
 
 		var new_td_num = $(document.createElement('td'));
