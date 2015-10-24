@@ -24,4 +24,12 @@
 
 - The load of the program causes a "syntax error" in the console log. I think it's because Firefox (possibly via jQuery) tried to parse it as JSON or XML. May just be jQuery trying to autodetect and nothing we can do about it.
 
-- Format jumps more like HRM.
+- Format jump text more like HRM. (jump if zero)
+
+- Put label in a div with a class to set the background. Make the actual SVG mostly transparent.
+
+- Give the label SVG's lines a class to set the color.
+
+- Simplify interface, it should just take an id.
+
+- Offer interface to hand an id and a URL.
