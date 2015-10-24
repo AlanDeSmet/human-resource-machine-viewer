@@ -62,6 +62,9 @@ along with human-resource-machine-view.  If not, see
 .hrmcode .arg svg {
 	vertical-align: middle;
 }
+.hrmcode .cmd {
+	display: inline-block;
+}
 .hrmcode .inbox,.hrmcode .outbox {
 	background-color: #9cb65b;
 	color: #474f2c;
@@ -75,7 +78,9 @@ along with human-resource-machine-view.  If not, see
 	color: #3d3c5a;
 }
 .hrmcode .jumpdst {
-	color: #5d5d91;
+	color: #8d8dc1;
+	/*color: #5d5d91;*/
+	min-width: 1.5em;
 }
 .hrmcode .asm_comment {
 	background-color: #ddd6b5;
