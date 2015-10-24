@@ -67,18 +67,22 @@ function simple_svg(width, height) {
 		return document.createElementNS(this.svg.namespaceURI,name);
 	}
 
+	var marker_size = 2.75;
 	var path = this.new_el('path');
-	path.setAttribute('d', 'M0.75,0.75 L0.75,4.125 L3.75,2.25 Z');
+	path.setAttribute('d', "M0,0"+" "+
+		"L0,"+marker_size+" "+
+		"L"+marker_size+","+(marker_size/2)+" "+
+		"Z");
 	//path.setAttribute('stroke', 'red');
 	path.setAttribute('stroke-width', 0);
 	path.setAttribute('class', 'jumppatharrow');
 
 	var marker = this.new_el('marker');
 	marker.setAttribute('id', 'markerArrow');
-	marker.setAttribute('markerWidth', '4.875');
-	marker.setAttribute('markerHeight', '4.875');
-	marker.setAttribute('refX', '0.75');
-	marker.setAttribute('refY', '2.50');
+	marker.setAttribute('markerWidth', marker_size);
+	marker.setAttribute('markerHeight', marker_size);
+	marker.setAttribute('refX', '0');
+	marker.setAttribute('refY', marker_size/2);
 	marker.setAttribute('orient', 'auto');
 	marker.setAttribute('markerUnits', 'strokeWidth');
 	marker.appendChild(path);
