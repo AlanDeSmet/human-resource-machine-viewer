@@ -24,6 +24,7 @@ along with human-resource-machine-view.  If not, see
 	background-color: #bca08b;
 	color: black;
 	position: relative;
+	z-index: -2;
 }
 .hrmcode table {
 	border-collapse: collapse;
@@ -92,4 +93,7 @@ along with human-resource-machine-view.  If not, see
 	stroke: #8d8dc1;
 	fill: #8d8dc1;
 	stroke-width: 0;
+}
+.hrmcode > svg {
+	z-index: -1;
 }
