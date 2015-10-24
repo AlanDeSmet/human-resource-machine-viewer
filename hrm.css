@@ -58,7 +58,6 @@ along with human-resource-machine-view.  If not, see
 	color: #5f2b1d;
 }
 .hrmcode .comment {
-	background-color: #ddd6b5;
 	color: black;
 }
 .hrmcode .comment svg {
@@ -66,7 +65,9 @@ along with human-resource-machine-view.  If not, see
 }
 .hrmcode .arg svg {
 	vertical-align: middle;
-	background-color: #ddd6b5;
+}
+.hrmcode .asm_comment, .hrmcode .arg svg, .hrmcode .comment {
+	background-color: #ede6c5;
 }
 .hrmcode .cmd {
 	display: inline-block;
@@ -89,7 +90,6 @@ along with human-resource-machine-view.  If not, see
 	min-width: 1.5em;
 }
 .hrmcode .asm_comment {
-	background-color: #ddd6b5;
 	color: #666;
 }
 .hrmcode td.linenum {
