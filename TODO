@@ -1,5 +1,3 @@
-- Fix bad offset on initial load problem!
-
 - Y-axis trimming on labels.
 
 - Make comments look more like HRM
