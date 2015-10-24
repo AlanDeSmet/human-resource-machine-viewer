@@ -5,6 +5,7 @@
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <link href="hrm.css" rel="stylesheet">
 <script src="hrm.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
 <style>
 .footer {
 	font-size: 80%;
@@ -19,6 +20,44 @@ h1,h2,h3,h4 {
 }
 pre {
 	margin-left: 2em;
+	font-family: 'Ubuntu Mono';
+}
+ul#tabs {
+	list-style-type: none;
+	padding-top: 2em;
+	margin: 0;
+	/*
+	vertical-align: bottom;
+	border: 2px solid green;
+	height: 3em;
+	*/
+}
+ul#tabs li {
+	display: inline-block;
+	margin-right: 1em;
+}
+ul#tabs li a {
+	color: #42454a;
+	background-color: #9C806B;
+	padding: 0.3em 0.3em 0 0.3em;
+	text-decoration: none;
+	font-family: 'Passion One', sans-serif, Impact;
+	font-size: 170%;
+	border-radius: 0.4em 0.4em 0 0;
+}
+ul#tabs li a:hover {
+	background-color: #BCA08B;
+}
+ul#tabs li a.selected {
+	color: black;
+	background-color: #BCA08B;
+	padding-top: 0.8em;
+}
+div.tabbody {
+}
+div.tabbody.hidden { display: none; }
+pre {
+	font-size: 120%;
 }
 </style>
 </head>
@@ -48,7 +87,15 @@ along with human-resource-machine-view.  If not, see
 Program Viewer. <a href="index.html">More information about the
 viewer, including how to use it, is available.</a>
 
-<div class="hrmcode" id="code">
+<ul id="tabs">
+<li><a href="#tabcode">Code</a>
+<li><a href="#tabraw">Raw</a>
+</ul>
+<div class="tabbody" id="tabcode">
+<div class="hrmcode" id="code"></div>
+</div>
+<div class="tabbody hide" id="tabraw">
+<pre id="rawcode"></pre>
 </div>
 
 
@@ -56,15 +103,57 @@ viewer, including how to use it, is available.</a>
 <div class="footer">Human Resource Machine Program Viewer ©2015 Alan De Smet</div>
 
 <script>
+
+// Initialize code viewer
 function fonts_loaded() {
-	var hrmv = new hrm_viewer();
-	hrmv.download_and_append_code_table('code', "36-Alphabetizer.size.speed.asm");
+	font_ready = 1;
+	render_table();
 }
 WebFont.load({
 	google: { families: ['Passion One'] },
 	active: fonts_loaded,
 	inactive: fonts_loaded,
 });
+
+
+function show_tab(ev) {
+	$('#tabs a.selected').removeClass("selected");
+	$(this).addClass("selected");
+	$('.tabbody').addClass('hidden');
+	var id = $(this).attr('href');
+	$(id).removeClass('hidden');
+	ev.preventDefault();
+	$(this).blur();
+}
+
+var code_ready = '';
+var font_ready = 0;
+
+function render_table() {
+	if( (code_ready.length == 0) || (!font_ready)) { return; }
+	var hrmv = new hrm_viewer();
+	hrmv.append_code_table('code', code_ready);
+}
+
+function code_arrived(data) {
+	code_ready = data;
+	render_table();
+	$('#rawcode').text(code_ready);
+}
+
+$(document).ready(function(){
+	url = '36-Alphabetizer.size.speed.asm';
+
+	$.get(url, code_arrived, "text");
+
+	// Initialize tabs
+	$('#tabs a').click(show_tab);
+	$('.tabbody').addClass('hidden');
+	$('#tabs a').first().trigger("click");
+});
+	
+
+
 </script>
 </body>
 </html>
