@@ -46,6 +46,10 @@ along with human-resource-machine-view.  If not, see
 	border-radius: 0.1em;
 	box-shadow: 0.1em 0.1em 0.05em #ac907b;
 }
+
+.hrmcode span.asm_comment {
+	text-transform: none;
+}
 .hrmcode .unknown {
 }
 .hrmcode .copyfrom,.hrmcode .copyto {

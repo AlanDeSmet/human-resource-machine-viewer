@@ -1,7 +1,5 @@
 - Fix bad offset on initial load problem!
 
-- Don't lowercase asm_comment.
-
 - Y-axis trimming on labels.
 
 - Make comments look more like HRM
