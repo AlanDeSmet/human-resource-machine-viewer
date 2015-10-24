@@ -263,7 +263,9 @@ function extract_labels(ilines) {
 	return out;
 }
 
-function append_code_table(root_div, lines) {
+function append_code_table(root_div, data) {
+
+	var lines = data.split(new RegExp('\r?\n'));
 
 	var root = $(document.createElement('table'));
 	
@@ -433,15 +435,3 @@ function append_code_table(root_div, lines) {
 
 }
 
-function code_arrived(data) {
-	console.log("Code downloaded.\n");
-
-	var root = $('#code');
-	var lines = data.split(new RegExp('\r?\n'));
-	append_code_table(root, lines)
-
-}
-var code = "tests/36-Alphabetizer.size.speed.asm";
-
-// TODO: Why logging a syntax error? I'm specifying text.
-$.get(code, code_arrived, "text")

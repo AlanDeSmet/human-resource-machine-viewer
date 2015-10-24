@@ -58,7 +58,7 @@ function code_arrived(data) {
 
 	var root = $('#code');
 	var lines = data.split(new RegExp('\r?\n'));
-	append_code_table(root, lines)
+	append_code_table(root, data)
 
 }
 var code = "tests/36-Alphabetizer.size.speed.asm";
