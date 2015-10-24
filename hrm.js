@@ -266,6 +266,44 @@ function extract_labels(ilines) {
 function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts) {
 	var new_svg = new simple_svg(width, height);
 	//new_svg.rect(0,0,table_width,table_height, 'green');
+
+	var max_start_x = 0;
+	var gaps = [];
+	for(var i = 0; i < srcs.length; i++) {
+		var src = srcs[i]['el'];
+		var start_x = src.offset().left + src.outerWidth() - offset_left;
+		if(max_start_x < start_x) { max_start_x = start_x; }
+		var sy = src.offset().top;
+
+		var label = srcs[i]['dst'];
+		if(label in dsts) {
+			var dst = dsts[label];
+			var dy = dst.offset().top;
+			gaps.push(Math.abs(dy-sy));
+		}
+	}
+	gaps.sort(function(a,b){ return a-b; });
+
+	// A "transit" is the point on the arc furthest to the right.  We try to
+	// space them out evenly.
+	var first_transit = max_start_x + 0;
+	var transit_width = 10;
+	var last_transit = width - transit_width;
+	var num_transits = Math.floor((last_transit - first_transit)/transit_width + 1);
+
+	var transit_breaks = [];
+	var gaps_per_transit = gaps.length / num_transits;
+	for(var i = 0; i < num_transits; i++) {
+		transit_breaks.push(gaps[Math.floor(gaps_per_transit*i)]);
+	}
+	console.log("transits",num_transits);
+	console.log("gaps_per_transit",gaps_per_transit);
+	console.log("gaps", gaps);
+	console.log("transit_breaks", transit_breaks);
+
+
+
+
 	for(var i = 0; i < srcs.length; i++) {
 		var label = srcs[i]['dst'];
 		var src = srcs[i]['el'];
@@ -278,7 +316,14 @@ function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts)
 			var endx = dst.offset().left-offset_left + dst.outerWidth() + 25;
 			var endy = dst.offset().top-offset_top + dst.outerHeight()/2;
 
-			var mid_x = Math.max(startx, endx) + 200;
+			var gap_y = Math.abs(endy-starty);
+			var transit = 0;
+			for(transit = 0; transit < transit_breaks.length; transit++) {
+				if(gap_y < transit_breaks[transit]) { break; }
+			}
+			var mid_x = first_transit + transit*transit_width;
+			console.log("(gap:",gap_y,")",first_transit,"+",transit,"*",transit_width,"=",mid_x);
+
 			var mid_y = (starty + endy) / 2;
 			var bcurve_y = (starty - endy) / 2;
 			var path_cmd = ["M", startx, starty,
@@ -432,7 +477,7 @@ function append_code_table(root_div, data) {
 	//table_height = 50;
 
 	var svg = create_jump_diagram(
-		table_width + 400, table_height,
+		table_width + 50, table_height,
 		root_div.offset().left, root_div.offset().top,
 		srcs, dsts);
 	root_div.append(svg);
