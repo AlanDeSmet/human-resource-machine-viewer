@@ -392,13 +392,11 @@ function append_code_table(root_div, data) {
 	var table_pos = root.offset();
 	var table_width = root.outerWidth();
 	var table_height = root.outerHeight();
-	console.log(table_width, table_height);
 
 	//table_width = 300;
 	//table_height = 50;
 
 	var new_svg = new simple_svg(table_width + 400, table_height);
-	console.log(new_svg);
 	//new_svg.rect(0,0,table_width,table_height, 'green');
 	var offset_left = root_div.offset().left;
 	var offset_top = root_div.offset().top;
@@ -429,7 +427,6 @@ function append_code_table(root_div, data) {
 			console.log("jump label", label, "lacks a matching destination");
 		}
 	}
-	console.log(new_svg);
 	root_div.prepend(new_svg.svg);
 	
 
