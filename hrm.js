@@ -18,6 +18,8 @@ along with human-resource-machine-view.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 
+function hrm_viewer() {
+
 ////////////////////////////////////////////////////////////////////////////////
 function simple_svg(width, height) {
 	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -340,7 +342,7 @@ function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts)
 	return new_svg.svg;
 }
 
-function append_code_table(root_div, data) {
+this.append_code_table = function(root_div, data) {
 
 	var lines = data.split(new RegExp('\r?\n'));
 
@@ -484,13 +486,15 @@ function append_code_table(root_div, data) {
 	root_div.append(svg);
 }
 
-function download_and_append_code_table(id, url) {
+this.download_and_append_code_table = function (id, url) {
+	var t = this;
 	function code_arrived(data) {
-		console.log("Code downloaded.\n");
+		//console.log("Code downloaded.\n");
 		var root = $('#'+id);
-		append_code_table(root, data);
+		t.append_code_table(root, data);
 	}
 	$.get(url, code_arrived, "text")
 }
 
 
+}

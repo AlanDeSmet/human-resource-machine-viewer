@@ -86,7 +86,8 @@ route).
 for your div and the URL to the code:
 <pre>
 &lt;script&gt;
-download_and_append_code_table('code', "simple.asm");
+var hrmv = new hrm_viewer();
+hrmv.download_and_append_code_table('code', "simple.asm");
 &lt;/script&gt;
 </pre>
 
@@ -98,7 +99,10 @@ use something like this.
 
 <pre>
 &lt;script&gt;
-function code_arrived(data) { append_code_table($('#code'), data); }
+function code_arrived(data) {
+	var hrmv = new hrm_viewer();
+	hrmv.append_code_table($('#code'), data);
+}
 var code = "tests/36-Alphabetizer.size.speed.asm";
 $.get(code, code_arrived, "text")
 &lt;/script&gt;
@@ -110,7 +114,8 @@ $.get(code, code_arrived, "text")
 <div class="footer">Human Resource Machine Program Viewer ©2015 Alan De Smet</div>
 
 <script>
-download_and_append_code_table('code', "simple.asm");
+var hrmv = new hrm_viewer();
+hrmv.download_and_append_code_table('code', "simple.asm");
 </script>
 </body>
 </html>
