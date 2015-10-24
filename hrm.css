@@ -25,6 +25,7 @@ along with human-resource-machine-view.  If not, see
 	color: black;
 	position: relative;
 	z-index: -2;
+	text-transform: none;
 }
 .hrmcode table {
 	border-collapse: collapse;
