@@ -51,6 +51,8 @@ them similarly to how HRM itself does.
 <p>The viewer is very new and the interface may change!
 
 <h2>Example</h2>
+<a href="example.html">A more complex example is also
+available.</a>
 <div class="hrmcode" id="code">
 </div>
 
@@ -112,7 +114,7 @@ function code_arrived(data) {
 	var root = $('#code');
 	append_code_table(root, data);
 }
-var code = "tests/36-Alphabetizer.size.speed.asm";
+var code = "simple.asm";
 
 // TODO: Why logging a syntax error? I'm specifying text.
 $.get(code, code_arrived, "text")

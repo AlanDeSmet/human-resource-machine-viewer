@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<title>Human Resource Machine Program Viewer Example</title>
+<link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
+<script src="pako_inflate.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link href="hrm.css" rel="stylesheet">
+<script src="hrm.js"></script>
+<style>
+.footer {
+	font-size: 80%;
+	color: #888;
+}
+body {
+	font-family: sans-serif;
+}
+h1,h2,h3,h4 {
+	font-weight: normal;
+	font-family: 'Passion One', sans-serif, Impact;
+}
+pre {
+	margin-left: 2em;
+}
+</style>
+</head>
+<body>
+<!--
+This file is part of human-resource-machine-viewer, 
+copyright 2015 Alan De Smet.
+
+human-resource-machine-viewer is free software you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.
+
+human-resource-machine-viewer is distributed in the hope that it
+will be useful, but WITHOUT ANY WARRANTY; without even the
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with human-resource-machine-view.  If not, see
+<http://www.gnu.org/licenses/>.
+-->
+<h1>Human Resource Machine Program Viewer Example</h1>
+
+<p>This is an extended example for the Human Resource Machine
+Program Viewer. <a href="index.html">More information about the
+viewer, including how to use it, is available.</a>
+
+<div class="hrmcode" id="code">
+</div>
+
+
+
+<div class="footer">Human Resource Machine Program Viewer ©2015 Alan De Smet</div>
+
+<script>
+
+function code_arrived(data) {
+	console.log("Code downloaded.\n");
+	var root = $('#code');
+	append_code_table(root, data);
+}
+var code = "36-Alphabetizer.size.speed.asm";
+
+// TODO: Why logging a syntax error? I'm specifying text.
+$.get(code, code_arrived, "text")
+
+</script>
+</body>
+</html>
