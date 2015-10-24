@@ -59,6 +59,17 @@ div.tabbody.hidden { display: none; }
 pre {
 	font-size: 120%;
 }
+a.downbutton {
+	display: block;
+	color: #42454a;
+	font-family: 'Passion One', sans-serif, Impact;
+	background-color: #9C806B;
+	font-size: 170%;
+	border-radius: 0.4em;
+	padding: 0.1em 0.3em;
+	text-decoration: none;
+	margin-top: 0.5em;
+}
 </style>
 </head>
 <body>
@@ -87,6 +98,7 @@ along with human-resource-machine-view.  If not, see
 Program Viewer. <a href="index.html">More information about the
 viewer, including how to use it, is available.</a>
 
+<div style="float: right"><a class="downbutton" download>Download</a></div>
 <ul id="tabs">
 <li><a href="#tabcode">Code</a>
 <li><a href="#tabraw">Raw</a>
@@ -150,6 +162,8 @@ $(document).ready(function(){
 	$('#tabs a').click(show_tab);
 	$('.tabbody').addClass('hidden');
 	$('#tabs a').first().trigger("click");
+
+	$('.downbutton').attr("href", url);
 });
 	
 
