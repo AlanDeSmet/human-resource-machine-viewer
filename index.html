@@ -79,25 +79,27 @@ It should have a class of hrmcode and a unique id.
 &lt;/div&gt;
 </pre>
 
-<p>Step 3: Arrange to get a string containing the HRM program.
+<p>Step 3: Select 3a (the simple route) or 3b (the complex
+route).
+
+<p>Step 3a (simple): Add the following code, passing in the id
+for your div and the URL to the code:
+<pre>
+&lt;script&gt;
+download_and_append_code_table('code', "simple.asm");
+&lt;/script&gt;
+</pre>
+
+<p>Step 3b (complex): Arrange to get a string containing the HRM program.
 Call "append_code_table(root, data)" where root is the element
 you created to hold the code and data is the string holding the
 code.  If, for example, the code is on your web server, you could
 use something like this.
 
-
 <pre>
 &lt;script&gt;
-function code_arrived(data) {
-	console.log("Code downloaded.\n");
-
-	var root = $('#code');
-	append_code_table(root, data);
-
-}
+function code_arrived(data) { append_code_table($('#code'), data); }
 var code = "tests/36-Alphabetizer.size.speed.asm";
-
-// TODO: Why logging a syntax error? I'm specifying text.
 $.get(code, code_arrived, "text")
 &lt;/script&gt;
 </pre>
