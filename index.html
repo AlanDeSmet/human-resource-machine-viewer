@@ -62,9 +62,29 @@ function simple_svg(width, height) {
 	svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
 	this.svg = svg;
 
+
 	this.new_el = function(name) {
 		return document.createElementNS(this.svg.namespaceURI,name);
 	}
+
+	var path = this.new_el('path');
+	path.setAttribute('d', 'M1,1 L1,5.5 L5,3 L1,1');
+	path.setAttribute('stroke', 'red');
+	path.setAttribute('fill', 'yellow');
+
+	var marker = this.new_el('marker');
+	marker.setAttribute('id', 'markerArrow');
+	marker.setAttribute('markerWidth', '6.5');
+	marker.setAttribute('markerHeight', '6.5');
+	marker.setAttribute('refX', '1');
+	marker.setAttribute('refY', '3');
+	marker.setAttribute('orient', 'auto');
+	marker.setAttribute('markerUnits', 'strokeWidth');
+	marker.appendChild(path);
+
+	var defs = this.new_el('defs');
+	defs.appendChild(marker);
+	this.svg.appendChild(defs);
 
 	this.rect = function(x,y,width,height, color) {
 		var e = this.new_el('rect');
@@ -106,6 +126,7 @@ function simple_svg(width, height) {
 		//e.setAttribute('stroke', color);
 		e.setAttribute('class', thisclass);
 		e.setAttribute('fill', 'transparent');
+		e.setAttribute('style', 'marker-end: url(#markerArrow)');
 		//e.setAttribute('stroke-width', width);
 		this.svg.appendChild(e);
 	}
@@ -416,7 +437,7 @@ function append_code_table(root_div, lines) {
 			var startx = src.offset().left-offset_left + src.outerWidth();
 			var starty = src.offset().top-offset_top + src.outerHeight()/2;
 
-			var endx = dst.offset().left-offset_left + dst.outerWidth();
+			var endx = dst.offset().left-offset_left + dst.outerWidth() + 50;;
 			var endy = dst.offset().top-offset_top + dst.outerHeight()/2;
 
 			var mid_x = Math.max(startx, endx) + 200;
