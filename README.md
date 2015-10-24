@@ -1,8 +1,6 @@
 This is a Javascript program that takes a program copied out of [Human Resource Machine](http://tomorrowcorporation.com/humanresourcemachine) and renders it similarly to the original game.
 
-You can see a live preview at https://alandesmet.github.io/human-resource-machine-viewer/
-
-While the code is functional, it's not quite ready for public use.  More documentation soon!
+Documentation and a live previous are available at https://alandesmet.github.io/human-resource-machine-viewer/
 
 human-resource-machine-viewer License
 -------------------------------------
