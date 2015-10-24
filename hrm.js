@@ -435,6 +435,6 @@ function append_code_table(root_div, data) {
 		table_width + 400, table_height,
 		root_div.offset().left, root_div.offset().top,
 		srcs, dsts);
-	root_div.prepend(svg);
+	root_div.append(svg);
 }
 
