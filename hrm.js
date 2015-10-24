@@ -263,6 +263,40 @@ function extract_labels(ilines) {
 	return out;
 }
 
+function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts) {
+	var new_svg = new simple_svg(width, height);
+	//new_svg.rect(0,0,table_width,table_height, 'green');
+	for (var label in srcs) {
+		var src = srcs[label];
+		if(label in dsts) {
+			var dst = dsts[label];
+
+			var startx = src.offset().left-offset_left + src.outerWidth();
+			var starty = src.offset().top-offset_top + src.outerHeight()/2;
+
+			var endx = dst.offset().left-offset_left + dst.outerWidth() + 25;
+			var endy = dst.offset().top-offset_top + dst.outerHeight()/2;
+
+			var mid_x = Math.max(startx, endx) + 200;
+			var mid_y = (starty + endy) / 2;
+			var bcurve_y = (starty - endy) / 2;
+			var path_cmd = ["M", startx, starty,
+				"C", startx + 20, starty,
+					mid_x, mid_y + bcurve_y,
+					mid_x, mid_y,
+				"C", mid_x, mid_y - bcurve_y,
+					endx + 20, endy,
+					endx, endy
+					].join(" ");
+			new_svg.path(path_cmd,'jumppath');
+		} else {
+			console.log("jump label", label, "lacks a matching destination");
+		}
+	}
+
+	return new_svg.svg;
+}
+
 function append_code_table(root_div, data) {
 
 	var lines = data.split(new RegExp('\r?\n'));
@@ -396,39 +430,10 @@ function append_code_table(root_div, data) {
 	//table_width = 300;
 	//table_height = 50;
 
-	var new_svg = new simple_svg(table_width + 400, table_height);
-	//new_svg.rect(0,0,table_width,table_height, 'green');
-	var offset_left = root_div.offset().left;
-	var offset_top = root_div.offset().top;
-	for (var label in srcs) {
-		var src = srcs[label];
-		if(label in dsts) {
-			var dst = dsts[label];
-
-			var startx = src.offset().left-offset_left + src.outerWidth();
-			var starty = src.offset().top-offset_top + src.outerHeight()/2;
-
-			var endx = dst.offset().left-offset_left + dst.outerWidth() + 25;
-			var endy = dst.offset().top-offset_top + dst.outerHeight()/2;
-
-			var mid_x = Math.max(startx, endx) + 200;
-			var mid_y = (starty + endy) / 2;
-			var bcurve_y = (starty - endy) / 2;
-			var path_cmd = ["M", startx, starty,
-				"C", startx + 20, starty,
-					mid_x, mid_y + bcurve_y,
-					mid_x, mid_y,
-				"C", mid_x, mid_y - bcurve_y,
-					endx + 20, endy,
-					endx, endy
-					].join(" ");
-			new_svg.path(path_cmd,'jumppath');
-		} else {
-			console.log("jump label", label, "lacks a matching destination");
-		}
-	}
-	root_div.prepend(new_svg.svg);
-	
-
+	var svg = create_jump_diagram(
+		table_width + 400, table_height,
+		root_div.offset().left, root_div.offset().top,
+		srcs, dsts);
+	root_div.prepend(svg);
 }
 
