@@ -88,3 +88,8 @@ along with human-resource-machine-view.  If not, see
 	stroke: #8d8dc1;
 	stroke-width: 0.3em;
 }
+.hrmcode .jumppatharrow {
+	stroke: #8d8dc1;
+	fill: #8d8dc1;
+	stroke-width: 0;
+}
