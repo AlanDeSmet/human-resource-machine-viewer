@@ -296,13 +296,10 @@ function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts)
 	for(var i = 0; i < num_transits; i++) {
 		transit_breaks.push(gaps[Math.floor(gaps_per_transit*i)]);
 	}
-	console.log("transits",num_transits);
-	console.log("gaps_per_transit",gaps_per_transit);
-	console.log("gaps", gaps);
-	console.log("transit_breaks", transit_breaks);
-
-
-
+	//console.log("transits",num_transits);
+	//console.log("gaps_per_transit",gaps_per_transit);
+	//console.log("gaps", gaps);
+	//console.log("transit_breaks", transit_breaks);
 
 	for(var i = 0; i < srcs.length; i++) {
 		var label = srcs[i]['dst'];
@@ -322,7 +319,7 @@ function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts)
 				if(gap_y < transit_breaks[transit]) { break; }
 			}
 			var mid_x = first_transit + transit*transit_width;
-			console.log("(gap:",gap_y,")",first_transit,"+",transit,"*",transit_width,"=",mid_x);
+			//console.log("(gap:",gap_y,")",first_transit,"+",transit,"*",transit_width,"=",mid_x);
 
 			var mid_y = (starty + endy) / 2;
 			var bcurve_y = (starty - endy) / 2;
