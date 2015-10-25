@@ -176,9 +176,9 @@ $(document).ready(function(){
 	$('.tabbody').addClass('hidden');
 	$('#tabs a').first().trigger("click");
 
-	$('.downbutton').attr("href", url);
 
 	var url = get_first_search_arg('u');
+	$('.downbutton').attr("href", url);
 	var title = get_first_search_arg('t');
 	if(title.length == 0) { title = url; }
 	if(title.length == 0) { title = 'Human Resource Machine Program Viewer'; }
