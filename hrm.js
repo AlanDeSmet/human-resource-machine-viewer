@@ -25,8 +25,6 @@ function simple_svg(width, height, view_min_x, view_min_y, view_width, view_heig
 	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	svg.setAttribute('version', '1.1');
 	svg.setAttribute('baseProfile', 'full');
-	svg.setAttribute('width', width);
-	svg.setAttribute('height', height);
 	svg.setAttribute('viewBox', view_min_x + " " + view_min_y + " " +
 		view_width + " " + view_height);
 	svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
