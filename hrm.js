@@ -376,6 +376,8 @@ this.append_code_table = function(id, data) {
 		var jmpdst;
 		if(text == 'bumpup') { text = 'bump +'; }
 		else if(text == 'bumpdown') { text = 'bump −'; }
+		else if(text == 'inbox') { text = '➡ inbox'; }
+		else if(text == 'outbox') { text = 'outbox ➡'; }
 		else if(text == 'asm_comment') {
 			text = tokens[1];
 			tokens = [];
