@@ -21,13 +21,14 @@ along with human-resource-machine-view.  If not, see
 function hrm_viewer() {
 
 ////////////////////////////////////////////////////////////////////////////////
-function simple_svg(width, height) {
+function simple_svg(width, height, view_min_x, view_min_y, view_width, view_height) {
 	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	svg.setAttribute('version', '1.1');
 	svg.setAttribute('baseProfile', 'full');
 	svg.setAttribute('width', width);
 	svg.setAttribute('height', height);
-	svg.setAttribute('viewBox', "0 0 "+width+" "+height);
+	svg.setAttribute('viewBox', view_min_x + " " + view_min_y + " " +
+		view_width + " " + view_height);
 	svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
 	this.svg = svg;
 
@@ -107,9 +108,14 @@ function simple_svg(width, height) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function new_hrm_label_svg(max_width, height, enclabel) {
+function new_hrm_label_svg(enclabel) {
 
-	var brush_width = Math.min(max_width,height)/10;
+	var width = 140;
+	var height = 40;
+	var brush_width = 4;
+
+	var hrm_max = 65535;
+
 	var zlib = window.atob(enclabel);
 	var zlibu8 = new Uint8Array(zlib.length);
 	for(var i = 0; i < zlib.length; i++) {
@@ -117,16 +123,15 @@ function new_hrm_label_svg(max_width, height, enclabel) {
 	}
 	var raw = pako.inflate(zlibu8);
 
-	var hrm_max = 65535;
-
-
 	var dv = new DataView(raw.buffer);
 	var elements = dv.getUint16(0, true);
 	var points = [];
 	var list_points = [];
 
-	var min_x = hrm_max;
+	var min_x = width;
 	var max_x = 0;
+	var min_y = height;
+	var max_y = 0;
 	for(var i = 0; i < elements && (i*4+6)<= raw.length; i++) {
 		var index = i*4+4;
 		var x = dv.getUint16(index, true);
@@ -135,25 +140,24 @@ function new_hrm_label_svg(max_width, height, enclabel) {
 			list_points.push(points);
 			points = [];
 		} else {
+			x = rescale_label(x, hrm_max, width);
+			y = rescale_label(y, hrm_max, height);
 			points.push([x,y]);
 			max_x = Math.max(max_x, x);
 			min_x = Math.min(min_x, x);
+			max_y = Math.max(max_y, y);
+			min_y = Math.min(min_y, y);
 		}
 	}
 
-	for(var i = 0; i < list_points.length; i++) {
-		for(var j = 0; j < list_points[i].length; j++) {
-			list_points[i][j][0] = list_points[i][j][0] - min_x;
-			list_points[i][j][0] =
-			rescale_label(list_points[i][j][0], hrm_max, max_width) + brush_width*2;
-			list_points[i][j][1] = rescale_label(list_points[i][j][1], hrm_max, height);
-		}
-	}
+	var view_min_x = Math.max(min_x-brush_width, 0);
+	var view_min_y = Math.max(min_y-brush_width, 0);
+	var view_max_x = Math.min(max_x+brush_width, width);
+	var view_max_y = Math.min(max_y+brush_width, height);
+	var view_width = view_max_x - view_min_x;
+	var view_height = view_max_y - view_min_y;
 
-	var width = ((max_x - min_x)*max_width)/hrm_max + brush_width*4;
-	if(max_x < min_x) { width = max_width; }
-
-	var new_svg = new simple_svg(width,height);
+	var new_svg = new simple_svg(width,height, view_min_x, view_min_y, view_width, view_height);
 	for(var i = 0; i < list_points.length; i++) {
 		var points = list_points[i];
 		if(points.length == 0) {
@@ -426,7 +430,7 @@ this.append_code_table = function(id, data) {
 
 		if(newclass == "comment") {
 			if(comment_id in labels.labels['comment']) {
-				var svg = new_hrm_label_svg(140, 40, labels.labels['comment'][comment_id]);
+				var svg = new_hrm_label_svg(labels.labels['comment'][comment_id]);
 				svg = $(svg);
 				e_cmd.append(svg);
 			}
@@ -440,7 +444,7 @@ this.append_code_table = function(id, data) {
 			var tmp;
 			if(re_memory_addr.test(tokens[1])) {
 				if(tokens[1] in labels.labels['label']) {
-					var svg = new_hrm_label_svg(70, 20, labels.labels['label'][tokens[1]]);
+					var svg = new_hrm_label_svg(labels.labels['label'][tokens[1]]);
 					svg = $(svg);
 					e_arg.append(svg);
 				} else {
@@ -450,7 +454,7 @@ this.append_code_table = function(id, data) {
 				var num = tmp[1];
 				if(num in labels.labels['label']) {
 					e_arg.append(document.createTextNode("[ "));
-					var svg = new_hrm_label_svg(70, 20, labels.labels['label'][num]);
+					var svg = new_hrm_label_svg(labels.labels['label'][num]);
 					svg = $(svg);
 					e_arg.append(svg);
 					e_arg.append(document.createTextNode(" ]"));
