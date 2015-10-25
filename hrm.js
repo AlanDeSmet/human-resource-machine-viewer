@@ -516,7 +516,16 @@ this.download_and_append_code_table = function (id, url) {
 	function code_arrived(data) {
 		t.append_code_table(id, data);
 	}
-	$.get(url, code_arrived, "text")
+	function failure(xhr,tstatus,err) {
+		$('#'+id).empty();
+		$('#'+id).text("Error loading "+url+". " + tstatus + " " + err);
+	}
+	$.ajax({
+		url: url,
+		success: code_arrived,
+		error: failure,
+		dataType: 'text',
+	});
 }
 
 
