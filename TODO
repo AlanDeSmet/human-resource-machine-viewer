@@ -19,3 +19,5 @@
 - Give the label SVG's lines a class to set the color.
 
 - For my pages, tell mobile browsers I'm mobile aware.
+
+- Better errors if can't load file.
