@@ -27,6 +27,7 @@ function simple_svg(width, height) {
 	svg.setAttribute('baseProfile', 'full');
 	svg.setAttribute('width', width);
 	svg.setAttribute('height', height);
+	svg.setAttribute('viewBox', "0 0 "+width+" "+height);
 	svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
 	this.svg = svg;
 

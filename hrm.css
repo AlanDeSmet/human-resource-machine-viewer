@@ -62,9 +62,13 @@ along with human-resource-machine-view.  If not, see
 }
 .hrmcode .comment svg {
 	vertical-align: middle;
+	height: 3em;
+	width: auto;
 }
 .hrmcode .arg svg {
 	vertical-align: middle;
+	height: 1em;
+	width: auto;
 }
 .hrmcode .asm_comment, .hrmcode .arg svg, .hrmcode .comment {
 	background-color: #ede6c5;
