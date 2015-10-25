@@ -18,6 +18,8 @@
 
 - Give the label SVG's lines a class to set the color.
 
-- For my pages, tell mobile browsers I'm mobile aware.
-
 - Better errors if can't load file.
+
+- Handle arrow space better. Somehow.
+
+- Move jump SVG behind table? Currently obscures attempts to click/hover on instructions.
