@@ -172,6 +172,13 @@ function get_first_search_arg(search_key) {
 	return '';
 }
 
+function report_error(msg) {
+	$('#rawcode').empty();
+	$('#rawcode').text(msg);
+	$('#code').empty();
+	$('#code').text(msg);
+}
+
 $(document).ready(function(){
 	// Initialize tabs
 	$('#tabs a').click(show_tab);
@@ -188,7 +195,7 @@ $(document).ready(function(){
 		$.get(url, code_arrived, "text");
 		$('h1').text(title);
 	} else {
-		$('#tabcode').text("Error: no program was specified.");
+		report_error("No program was specified to display.");
 	}
 });
 	
