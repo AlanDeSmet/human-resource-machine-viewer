@@ -23,3 +23,5 @@
 - Handle arrow space better. Somehow.
 
 - Move jump SVG behind table? Currently obscures attempts to click/hover on instructions.
+
+- Should inbox and outbox arrows be handled through :before{content: "➡";}?  Lets user restyle easily, even if they want the emoji version, or nothing at all.
