@@ -55,8 +55,7 @@ them similarly to how HRM itself does.
 <a
 href="example.html?u=36-Alphabetizer.size.speed.asm&t=Solution+for+floor+36:+Alphabetizer">A more complex example is also
 available.</a>
-<div class="hrmcode" id="code">
-</div>
+<div class="hrmcode" id="code">Loading...</div>
 
 <h2>Usage</h2>
 
@@ -75,11 +74,12 @@ match for the font used in HRM.
 </pre>
 
 <p>Step 2: Create a location for the code to be displayed in your body.
-It should have a class of hrmcode and a unique id.
+It should have a class of hrmcode and a unique id.  You can put
+content to display while the code loads inside; it will be
+removed when the code is ready.
 
 <pre>
-&lt;div class="hrmcode" id="code"&gt;
-&lt;/div&gt;
+&lt;div class="hrmcode" id="code"&gt;Loading...&lt;/div&gt;
 </pre>
 
 <p>Step 3: Add the following code, passing in the id

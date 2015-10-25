@@ -105,10 +105,10 @@ along with human-resource-machine-view.  If not, see
 <li><a href="#tabraw">Raw</a>
 </ul>
 <div class="tabbody" id="tabcode">
-<div class="hrmcode" id="code"></div>
+<div class="hrmcode" id="code">Loading...</div>
 </div>
 <div class="tabbody hide" id="tabraw">
-<pre id="rawcode"></pre>
+<pre id="rawcode">Loading...</pre>
 </div>
 
 
@@ -153,6 +153,7 @@ function render_table() {
 function code_arrived(data) {
 	code_ready = data;
 	render_table();
+	$('#rawcode').empty();
 	$('#rawcode').text(code_ready);
 }
 

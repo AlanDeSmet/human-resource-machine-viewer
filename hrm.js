@@ -349,6 +349,8 @@ function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts)
 this.append_code_table = function(id, data) {
 	var root_div = $('#'+id);
 
+	root_div.empty();
+
 	var lines = data.split(new RegExp('\r?\n'));
 
 	var root = $(document.createElement('table'));
@@ -360,7 +362,6 @@ this.append_code_table = function(id, data) {
 
 	var dsts = {};
 	var srcs = [];
-
 
 	var num_len = 2;
 	var pad = "00000";
