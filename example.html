@@ -192,7 +192,13 @@ $(document).ready(function(){
 	if(title.length == 0) { title = url; }
 	if(title.length == 0) { title = 'Human Resource Machine Program Viewer'; }
 	if(url.length != 0) {
-		$.get(url, code_arrived, "text");
+		$.ajax(url, {
+			success: code_arrived, 
+			error: function(xhr,tstatus, err) {
+				report_error("Unable to load program "+url+": "+tstatus+" "+err);
+			}, 
+			dataType: "text"
+			});
 		$('h1').text(title);
 	} else {
 		report_error("No program was specified to display.");
