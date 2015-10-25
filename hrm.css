@@ -88,6 +88,16 @@ along with human-resource-machine-view.  If not, see
 	background-color: #8d8dc1;
 	color: #3d3c5a;
 }
+.hrmcode .jumptype {
+	font-size: 70%;
+	line-height: 60%;
+	display: inline-block;
+	vertical-align: middle;
+	padding: 0;
+	padding-left: 0.1em;
+	margin: 0;
+	border: 0;
+}
 .hrmcode .jumpdst {
 	color: #8d8dc1;
 	/*color: #5d5d91;*/

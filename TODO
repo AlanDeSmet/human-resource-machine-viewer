@@ -1,5 +1,3 @@
-- Format jump text more like HRM. (jump if zero)
-
 - Y-axis trimming on labels.
 
 - If a label (jumpdst) has nothing jumping to it, delete it.

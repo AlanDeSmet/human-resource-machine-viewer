@@ -399,7 +399,23 @@ this.append_code_table = function(id, data) {
 		}
 
 		var e_cmd = $(document.createElement('span'));
-		e_cmd.text(text);
+		if(text == "jumpn" || text == "jumpz") {
+			e_cmd.append(document.createTextNode("jump"));
+			var overunder = $(document.createElement('div'));
+			overunder.addClass("jumptype");
+			overunder.append(document.createTextNode("if"));
+			overunder.append(document.createElement('br'));
+			if(text == "jumpn") {
+				overunder.append(document.createTextNode("negative"));
+			} else if(text == "jumpz") {
+				overunder.append(document.createTextNode("zero"));
+			} else {
+				overunder.append(document.createTextNode("unknown"));
+			}
+			e_cmd.append(overunder);
+		} else {
+			e_cmd.text(text);
+		}
 		e_cmd.addClass(newclass);
 		e_cmd.addClass('cmd');
 
