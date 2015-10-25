@@ -1,5 +1,3 @@
-- Y-axis trimming on labels.
-
 - If a label (jumpdst) has nothing jumping to it, delete it.
 
 - If a jump has no matching label (jumpdst), show the label's name.
