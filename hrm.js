@@ -509,11 +509,14 @@ this.append_code_table = function(id, data) {
 	//table_width = 300;
 	//table_height = 50;
 
-	var svg = create_jump_diagram(
-		table_width + 50, table_height,
-		root_div.offset().left, root_div.offset().top,
-		srcs, dsts);
-	root_div.append(svg);
+	var cjd = function() {
+		var svg = create_jump_diagram(
+			table_width + 50, table_height,
+			root_div.offset().left, root_div.offset().top,
+			srcs, dsts);
+		root_div.append(svg);
+	};
+	setTimeout(cjd, 10);
 }
 
 this.download_and_append_code_table = function (id, url) {
