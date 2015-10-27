@@ -165,7 +165,7 @@ function new_hrm_label_svg(enclabel) {
 		var points = list_points[i];
 		if(points.length == 0) {
 		} else if(points.length == 1) {
-			new_svg.circle(points[0][0], points[0][1], brush_width, 'black');
+			new_svg.circle(points[0][0], points[0][1], brush_width/2, 'black');
 		} else {
 			new_svg.polyline(points, brush_width, 'black');
 		}
