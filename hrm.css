@@ -39,7 +39,7 @@ along with human-resource-machine-view.  If not, see
 	margin: .3em;
 }
 .hrmcode td {
-	padding: 0.3em;
+	padding: 0.2em 0.3em;
 }
 .hrmcode span {
 	text-transform: lowercase;
