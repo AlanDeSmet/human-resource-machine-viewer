@@ -153,10 +153,10 @@ function new_hrm_label_svg(enclabel) {
 		}
 	}
 
-	var view_min_x = Math.max(min_x-brush_width, 0);
-	var view_min_y = Math.max(min_y-brush_width, 0);
-	var view_max_x = Math.min(max_x+brush_width, width);
-	var view_max_y = Math.min(max_y+brush_width, height);
+	var view_min_x = Math.max(min_x-brush_width/2, 0);
+	var view_min_y = Math.max(min_y-brush_width/2, 0);
+	var view_max_x = Math.min(max_x+brush_width/2, width);
+	var view_max_y = Math.min(max_y+brush_width/2, height);
 	var view_width = view_max_x - view_min_x;
 	var view_height = view_max_y - view_min_y;
 
