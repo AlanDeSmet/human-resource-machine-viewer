@@ -113,9 +113,9 @@ function simple_svg(width, height, view_min_x, view_min_y, view_width, view_heig
 ////////////////////////////////////////////////////////////////////////////////
 function new_hrm_label_svg(enclabel) {
 
-	var width = 120;
 	var height = 40;
-	var brush_width = 4;
+	var width = height*3;
+	var brush_width = height/11;
 
 	var hrm_max = 65535;
 
