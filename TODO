@@ -25,3 +25,5 @@
 - Move jump SVG behind table? Currently obscures attempts to click/hover on instructions.
 
 - Should inbox and outbox arrows be handled through :before{content: "➡";}?  Lets user restyle easily, even if they want the emoji version, or nothing at all.
+
+- Test serving external CSS really slowrly; like 2 second lag. Ensure that doesn't cause arrow misalignment.
