@@ -63,6 +63,7 @@ along with human-resource-machine-view.  If not, see
 .hrmcode .comment svg {
 	vertical-align: middle;
 	height: 3em;
+	max-width: 9em;
 	width: auto;
 }
 .hrmcode .arg svg {
