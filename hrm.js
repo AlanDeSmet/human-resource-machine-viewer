@@ -203,7 +203,7 @@ function tokenize_line(line) {
 
 	var cmd = tokens[0].toLowerCase();
 
-	var onearg = ['copyfrom', 'copyto', 'bumpup', 'bumpdown', 'jump', 'jumpn', 'jumpz', 'add', 'sub', 'comment'];
+	var onearg = ['copyfrom', 'copyto', 'bumpup', 'bumpdn', 'jump', 'jumpn', 'jumpz', 'add', 'sub', 'comment'];
 	var zeroarg = ['inbox', 'outbox'];
 
 	if(tokens.length == 2) {
@@ -386,7 +386,7 @@ this.append_code_table = function(id, data) {
 		var text = newclass;
 		var jmpdst;
 		if(text == 'bumpup') { text = 'bump +'; }
-		else if(text == 'bumpdown') { text = 'bump −'; }
+		else if(text == 'bumpdn') { text = 'bump −'; }
 		else if(text == 'inbox') { text = rightarrow + ' inbox'; }
 		else if(text == 'outbox') { text = 'outbox ' + rightarrow; }
 		else if(text == 'asm_comment') {
