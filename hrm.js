@@ -181,7 +181,11 @@ function HRMParser(lines) {
 	if((typeof lines) === "string") { lines = lines.split(/\r?\n/); }
 
 	// Discard header.
-	if(lines[0] == "-- HUMAN RESOURCE MACHINE PROGRAM --") { lines.shift(); }
+	var line_number_offset = 0;
+	if(lines[0] == "-- HUMAN RESOURCE MACHINE PROGRAM --") {
+		lines.shift();
+		line_number_offset++;
+	}
 
 	var parts = this.extract_labels(lines);
 	this.comments = parts.labels['comment'];
@@ -194,7 +198,10 @@ function HRMParser(lines) {
 	var lineobj;
 	for(var line = 0; line < asm_lines.length; line++) {
 		tokens = tokenize_line(asm_lines[line]);
-		lineobj = { cmd: tokens[0] };
+		lineobj = {
+			cmd: tokens[0],
+			src_line_num: line + line_number_offset
+		};
 		if(is_code(lineobj.cmd)) {
 			code_line_num++;
 			lineobj.line_num = code_line_num;
@@ -492,6 +499,7 @@ HRMViewer.prototype.append_code_table = function(id, data) {
 
 	this.dsts = {};
 	this.srcs = [];
+	this.line_to_row = {};
 
 	var num_len = 2;
 	var pad = "00000";
@@ -619,6 +627,7 @@ HRMViewer.prototype.append_code_table = function(id, data) {
 		new_row.append(new_td_num);
 		new_row.append(new_td_code);
 		this.root.append(new_row);
+		this.line_to_row[linecode.src_line_number] = new_row;
 	}
 
 	this.root_div.append(this.root);
