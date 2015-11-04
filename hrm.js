@@ -18,10 +18,10 @@ along with human-resource-machine-view.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 
-function hrm_viewer() {
+function hrm_viewer() { }
 
 ////////////////////////////////////////////////////////////////////////////////
-function simple_svg(width, height, view_min_x, view_min_y, view_width, view_height) {
+hrm_viewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y, view_width, view_height) {
 	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	svg.setAttribute('version', '1.1');
 	svg.setAttribute('baseProfile', 'full');
@@ -111,7 +111,7 @@ function simple_svg(width, height, view_min_x, view_min_y, view_width, view_heig
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function new_hrm_label_svg(enclabel) {
+hrm_viewer.prototype.new_hrm_label_svg = function(enclabel) {
 
 	var height = 40;
 	var width = height*3;
@@ -143,8 +143,8 @@ function new_hrm_label_svg(enclabel) {
 			list_points.push(points);
 			points = [];
 		} else {
-			x = rescale_label(x, hrm_max, width);
-			y = rescale_label(y, hrm_max, height);
+			x = this.rescale_label(x, hrm_max, width);
+			y = this.rescale_label(y, hrm_max, height);
 			points.push([x,y]);
 			max_x = Math.max(max_x, x);
 			min_x = Math.min(min_x, x);
@@ -160,7 +160,7 @@ function new_hrm_label_svg(enclabel) {
 	var view_width = view_max_x - view_min_x;
 	var view_height = view_max_y - view_min_y;
 
-	var new_svg = new simple_svg(width,height, view_min_x, view_min_y, view_width, view_height);
+	var new_svg = new this.simple_svg(width,height, view_min_x, view_min_y, view_width, view_height);
 	for(var i = 0; i < list_points.length; i++) {
 		var points = list_points[i];
 		if(points.length == 0) {
@@ -174,7 +174,7 @@ function new_hrm_label_svg(enclabel) {
 	return new_svg.svg;
 }
 
-function rescale_label(x, oldmax, newmax) {
+hrm_viewer.prototype.rescale_label = function(x, oldmax, newmax) {
 	return x * newmax / oldmax;
 }
 
@@ -182,24 +182,24 @@ function rescale_label(x, oldmax, newmax) {
 
 
 
-var re_asm_comment = /^--/;
-var re_jump_dst = /^(\S+):/;
-var re_whitespace = /\s+/;
-var re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
-var re_memory_addr = /^\d+$/;
-var re_memory_indirect = /^\[(d+)\]$/;
+hrm_viewer.prototype.re_asm_comment = /^--/;
+hrm_viewer.prototype.re_jump_dst = /^(\S+):/;
+hrm_viewer.prototype.re_whitespace = /\s+/;
+hrm_viewer.prototype.re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
+hrm_viewer.prototype.re_memory_addr = /^\d+$/;
+hrm_viewer.prototype.re_memory_indirect = /^\[(d+)\]$/;
 
-function tokenize_line(line) {
+hrm_viewer.prototype.tokenize_line = function(line) {
 	var match;
 
 	line = line.replace(/^\s+/, '');
 	line = line.replace(/\s+$/, '');
 
 	if(line == "") { return [ 'blank' ]; }
-	if(match = re_jump_dst.exec(line)) { return ['jumpdst', match[1]]; }
-	if(re_asm_comment.test(line)) { return ['asm_comment', line]; }
+	if(match = this.re_jump_dst.exec(line)) { return ['jumpdst', match[1]]; }
+	if(this.re_asm_comment.test(line)) { return ['asm_comment', line]; }
 
-	var tokens = line.split(re_whitespace);
+	var tokens = line.split(this.re_whitespace);
 
 	var cmd = tokens[0].toLowerCase();
 
@@ -219,23 +219,23 @@ function tokenize_line(line) {
 	return [ 'invalid', line ];
 }
 
-function is_code(cmd) {
+hrm_viewer.prototype.is_code = function(cmd) {
 	if(cmd == 'invalid' || cmd == 'blank' || cmd == 'jumpdst' || cmd == 'asm_comment' || cmd == 'comment') { return 0; }
 	return 1;
 }
 
-function count_code_lines(lines) {
+hrm_viewer.prototype.count_code_lines = function(lines) {
 	var code_lines = 0;
 	for(var i = 0; i < lines.length; i++) {
-		var tokens = tokenize_line(lines[i]);
-		if(is_code(tokens[0])) {
+		var tokens = this.tokenize_line(lines[i]);
+		if(this.is_code(tokens[0])) {
 			code_lines++;
 		}
 	}
 	return code_lines;
 }
 
-function extract_labels(ilines) {
+hrm_viewer.prototype.extract_labels = function(ilines) {
 	var out = {};
 	out.olines = [];
 	out.labels = {};
@@ -244,7 +244,7 @@ function extract_labels(ilines) {
 	for(var i = 0; i < ilines.length; i++) {
 		var thisline = ilines[i];
 		//console.log(i,thisline);
-		if(match = re_define.exec(thisline)) {
+		if(match = this.re_define.exec(thisline)) {
 			//console.log('hit');
 			var body = '';
 			var more = 1;
@@ -272,8 +272,8 @@ function extract_labels(ilines) {
 	return out;
 }
 
-function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts) {
-	var new_svg = new simple_svg(width, height);
+hrm_viewer.prototype.create_jump_diagram = function(width, height, offset_left, offset_top, srcs, dsts) {
+	var new_svg = new this.simple_svg(width, height);
 	//new_svg.rect(0,0,table_width,table_height, 'green');
 
 	var max_start_x = 0;
@@ -349,7 +349,7 @@ function create_jump_diagram(width, height, offset_left, offset_top, srcs, dsts)
 	return new_svg.svg;
 }
 
-this.append_code_table = function(id, data) {
+hrm_viewer.prototype.append_code_table = function(id, data) {
 	var root_div = $('#'+id);
 
 	root_div.empty();
@@ -360,7 +360,7 @@ this.append_code_table = function(id, data) {
 	
 	if(lines[0] == "-- HUMAN RESOURCE MACHINE PROGRAM --") { lines.shift(); }
 
-	var labels = extract_labels(lines);
+	var labels = this.extract_labels(lines);
 	lines = labels.olines;
 
 	var dsts = {};
@@ -369,16 +369,16 @@ this.append_code_table = function(id, data) {
 	var num_len = 2;
 	var pad = "00000";
 	// TODO: This is the wrong way to count lines; many aren't.
-	var code_lines = count_code_lines(lines);
+	var code_lines = this.count_code_lines(lines);
 	if(code_lines.length > 9999) { num_len = 5; }
 	else if(code_lines.length > 999) { num_len = 4; }
 	else if(code_lines.length > 99) { num_len = 3; } 
 	var line_number = 0;
 	for(var i = 0; i < lines.length; i++) {
-		var tokens = tokenize_line(lines[i]);
+		var tokens = this.tokenize_line(lines[i]);
 		if(tokens[0] == 'blank') { continue; }
 		var newclass = tokens[0];
-		var iscode = is_code(tokens[0]);
+		var iscode = this.is_code(tokens[0]);
 
 		// fe0e means "render preceeding as text, do not substitute a color emoji.
 		// Fixes overly helpful behavior on Safari.
@@ -437,7 +437,7 @@ this.append_code_table = function(id, data) {
 
 		if(newclass == "comment") {
 			if(comment_id in labels.labels['comment']) {
-				var svg = new_hrm_label_svg(labels.labels['comment'][comment_id]);
+				var svg = this.new_hrm_label_svg(labels.labels['comment'][comment_id]);
 				svg = $(svg);
 				e_cmd.append(svg);
 			}
@@ -449,9 +449,9 @@ this.append_code_table = function(id, data) {
 			e_arg.addClass(newclass);
 			e_arg.addClass('arg');
 			var tmp;
-			if(re_memory_addr.test(tokens[1])) {
+			if(this.re_memory_addr.test(tokens[1])) {
 				if(tokens[1] in labels.labels['label']) {
-					var svg = new_hrm_label_svg(labels.labels['label'][tokens[1]]);
+					var svg = this.new_hrm_label_svg(labels.labels['label'][tokens[1]]);
 					svg = $(svg);
 					e_arg.append(svg);
 				} else {
@@ -461,7 +461,7 @@ this.append_code_table = function(id, data) {
 				var num = tmp[1];
 				if(num in labels.labels['label']) {
 					e_arg.append(document.createTextNode("[ "));
-					var svg = new_hrm_label_svg(labels.labels['label'][num]);
+					var svg = this.new_hrm_label_svg(labels.labels['label'][num]);
 					svg = $(svg);
 					e_arg.append(svg);
 					e_arg.append(document.createTextNode(" ]"));
@@ -509,8 +509,9 @@ this.append_code_table = function(id, data) {
 	//table_width = 300;
 	//table_height = 50;
 
+	var that = this;
 	var cjd = function() {
-		var svg = create_jump_diagram(
+		var svg = that.create_jump_diagram(
 			table_width + 50, table_height,
 			root_div.offset().left, root_div.offset().top,
 			srcs, dsts);
@@ -519,7 +520,7 @@ this.append_code_table = function(id, data) {
 	setTimeout(cjd, 10);
 }
 
-this.download_and_append_code_table = function (id, url) {
+hrm_viewer.prototype.download_and_append_code_table = function (id, url) {
 	var t = this;
 	function code_arrived(data) {
 		t.append_code_table(id, data);
@@ -536,5 +537,3 @@ this.download_and_append_code_table = function (id, url) {
 	});
 }
 
-
-}
