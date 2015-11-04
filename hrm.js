@@ -396,7 +396,6 @@ HRMViewer.prototype.new_hrm_label_svg = function(enclabel) {
 
 
 
-HRMViewer.prototype.re_memory_addr = /^\d+$/;
 
 
 HRMViewer.prototype.create_jump_diagram = function(width, height, offset_left, offset_top, srcs, dsts) {
@@ -568,13 +567,14 @@ HRMViewer.prototype.append_code_table = function(id, data) {
 			}
 		}
 
+		var re_memory_addr = /^\d+$/;
 		var e_arg = 0;
 		if(arg !== undefined) {
 			e_arg = $(document.createElement('span'));
 			e_arg.addClass(newclass);
 			e_arg.addClass('arg');
 			var tmp;
-			if(this.re_memory_addr.test(arg)) {
+			if(re_memory_addr.test(arg)) {
 				if(arg in parser.labels) {
 					var svg = this.new_hrm_label_svg(parser.labels[arg]);
 					svg = $(svg);
