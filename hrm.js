@@ -18,6 +18,8 @@ along with human-resource-machine-view.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 
+
+////////////////////////////////////////////////////////////////////////////////
 // HRMLabel
 //
 // Takes a Human Resource Machine encoded label and optional height, width, and
@@ -92,10 +94,163 @@ function HRMLabel(encoded_label, height, width, brush_diameter) {
 	this.extents.height = this.extents.max_y - this.extents.min_y;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
-function hrm_viewer() { }
+// Pass in an HRM program in assembly format, either an as array of strings,
+// with each element representing a single line, or as a single string with
+// embedded newlines (prefixed with optional carriage returns).
+//
+// The "-- HUMAN RESOURCE MACHINE PROGRAM --" header is optional; if present
+// it will be discarded.
+//
+// The returned object will have:
+//
+// .comments - Object of the various code comments, indexed on the comment 
+//             identifier.  So example.comments["3"] retrieves comment 3.
+//             These are the encoded, text form!
+//
+// .labels - Same as .comments, but for labels for memory addresses.
+//
+// .code - Array of objects describing lines in the source file. Contains:
+//         .code[NUM].cmd - String. The command.  One of copyfrom, copyto,
+//                          bumpup, bumpdn, jump, jumpn, jumpz, add, sub,
+//                          inbox, outbox, comment, blank, asm_comment,
+//                          jumpdst, or error
+//         .code[NUM].arg - The argument to the command.  Only present for
+//                          copyfrom, copyto, bumpup, bumpdn, jump,
+//                          jumpn, jumpz, add, sub, comment, asm_comment,
+//                          and invalid.  For comment it's the identifier
+//                          for the image, available through 
+//                          .comments[.code[NUM].arg].  For asm_comment,
+//                          it's the text of the comment, including the
+//                          leading "--".  For invalid, it's the entire line.
+//         .code[NUM].line_num - Integer. The line number, as Human
+//                          Resource Machine counts them.  Not present
+//                          for invalid, blank, jumpdst, asm_comment or
+//                          comment.
+
+
+function HRMParser(lines) {
+
+	function is_code(cmd) {
+		if(cmd == 'invalid' ||
+			cmd == 'blank' ||
+			cmd == 'jumpdst' ||
+			cmd == 'asm_comment' ||
+			cmd == 'comment') { return 0; }
+		return 1;
+	}
+
+	function tokenize_line(line) {
+		var re_asm_comment = /^--/;
+		var re_jump_dst = /^(\S+):/;
+		var re_whitespace = /\s+/;
+
+		var match;
+
+		line = line.replace(/^\s+/, '');
+		line = line.replace(/\s+$/, '');
+
+		if(line == "") { return [ 'blank' ]; }
+		if(match = re_jump_dst.exec(line)) { return ['jumpdst', match[1]]; }
+		if(re_asm_comment.test(line)) { return ['asm_comment', line]; }
+
+		var tokens = line.split(re_whitespace);
+
+		var cmd = tokens[0].toLowerCase();
+
+		var onearg = ['copyfrom', 'copyto', 'bumpup', 'bumpdn', 'jump', 'jumpn', 'jumpz', 'add', 'sub', 'comment'];
+		var zeroarg = ['inbox', 'outbox'];
+
+		if(tokens.length == 2) {
+			for(var i = 0; i < onearg.length; i++) {
+				if(cmd == onearg[i]) { return [cmd, tokens[1]]; }
+			}
+		} else if(tokens.length == 1) {
+			for(var i = 0; i < zeroarg.length; i++) {
+				if(cmd == zeroarg[i]) { return [cmd]; }
+			}
+		}
+
+		return [ 'invalid', line ];
+	}
+
+	if((typeof lines) === "string") { lines = lines.split(/\r?\n/); }
+
+	// Discard header.
+	if(lines[0] == "-- HUMAN RESOURCE MACHINE PROGRAM --") { lines.shift(); }
+
+	var parts = this.extract_labels(lines);
+	this.comments = parts.labels['comment'];
+	this.labels = parts.labels['label'];
+
+	var asm_lines = parts.olines;
+	this.code = [];
+	var code_line_num = 0;
+	var tokens;
+	var lineobj;
+	for(var line = 0; line < asm_lines.length; line++) {
+		tokens = tokenize_line(asm_lines[line]);
+		lineobj = { cmd: tokens[0] };
+		if(is_code(lineobj.cmd)) {
+			code_line_num++;
+			lineobj.line_num = code_line_num;
+		}
+		if(tokens.length == 2) { lineobj.arg = tokens[1]; }
+		this.code.push(lineobj);
+	}
+}
+
+
+
+
+// Given an array of strings representing lines in an HRM program,
+// break out the graphic labels.  Returns an object:
+// .olines - The input lines minus any used by the labels.
+// .labels['comment'][NUMBER] = encoded_comment_number
+// .labels['label'][NUMBER] = encoded_label_number (the memory address)
+HRMParser.prototype.extract_labels = function(ilines) {
+	var out = {};
+	out.olines = [];
+	out.labels = {};
+	out.labels['comment'] = {};
+	out.labels['label'] = {};
+	for(var i = 0; i < ilines.length; i++) {
+		var thisline = ilines[i];
+		//console.log(i,thisline);
+		if(match = this.re_define.exec(thisline)) {
+			//console.log('hit');
+			var body = '';
+			var more = 1;
+			while(more) {
+				i++;
+				var line = ilines[i];
+				line = line.replace(/^\s+/, '');
+				line = line.replace(/\s+$/, '');
+				if(/;$/.test(line)) {
+					line = line.replace(/;$/, '');
+					more = 0;
+				}
+				body += line;
+				if(i >= ilines.length) { more = 0; }
+			}
+			var mytype = match[1].toLowerCase();
+			out.labels[mytype][match[2]] = body;
+			//console.log(mytype,">"+match[2]+"->",body);
+		} else {
+			//console.log('miss');
+			out.olines.push(thisline);
+		}
+	}
+
+	return out;
+}
+
+HRMParser.prototype.re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
 
 ////////////////////////////////////////////////////////////////////////////////
+function hrm_viewer() { }
+
 hrm_viewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y, view_width, view_height) {
 	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	svg.setAttribute('version', '1.1');
@@ -211,95 +366,9 @@ hrm_viewer.prototype.new_hrm_label_svg = function(enclabel) {
 
 
 
-hrm_viewer.prototype.re_asm_comment = /^--/;
-hrm_viewer.prototype.re_jump_dst = /^(\S+):/;
-hrm_viewer.prototype.re_whitespace = /\s+/;
-hrm_viewer.prototype.re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
 hrm_viewer.prototype.re_memory_addr = /^\d+$/;
 hrm_viewer.prototype.re_memory_indirect = /^\[(d+)\]$/;
 
-hrm_viewer.prototype.tokenize_line = function(line) {
-	var match;
-
-	line = line.replace(/^\s+/, '');
-	line = line.replace(/\s+$/, '');
-
-	if(line == "") { return [ 'blank' ]; }
-	if(match = this.re_jump_dst.exec(line)) { return ['jumpdst', match[1]]; }
-	if(this.re_asm_comment.test(line)) { return ['asm_comment', line]; }
-
-	var tokens = line.split(this.re_whitespace);
-
-	var cmd = tokens[0].toLowerCase();
-
-	var onearg = ['copyfrom', 'copyto', 'bumpup', 'bumpdn', 'jump', 'jumpn', 'jumpz', 'add', 'sub', 'comment'];
-	var zeroarg = ['inbox', 'outbox'];
-
-	if(tokens.length == 2) {
-		for(var i = 0; i < onearg.length; i++) {
-			if(cmd == onearg[i]) { return [cmd, tokens[1]]; }
-		}
-	} else if(tokens.length == 1) {
-		for(var i = 0; i < zeroarg.length; i++) {
-			if(cmd == zeroarg[i]) { return [cmd]; }
-		}
-	}
-
-	return [ 'invalid', line ];
-}
-
-hrm_viewer.prototype.is_code = function(cmd) {
-	if(cmd == 'invalid' || cmd == 'blank' || cmd == 'jumpdst' || cmd == 'asm_comment' || cmd == 'comment') { return 0; }
-	return 1;
-}
-
-hrm_viewer.prototype.count_code_lines = function(lines) {
-	var code_lines = 0;
-	for(var i = 0; i < lines.length; i++) {
-		var tokens = this.tokenize_line(lines[i]);
-		if(this.is_code(tokens[0])) {
-			code_lines++;
-		}
-	}
-	return code_lines;
-}
-
-hrm_viewer.prototype.extract_labels = function(ilines) {
-	var out = {};
-	out.olines = [];
-	out.labels = {};
-	out.labels['comment'] = {};
-	out.labels['label'] = {};
-	for(var i = 0; i < ilines.length; i++) {
-		var thisline = ilines[i];
-		//console.log(i,thisline);
-		if(match = this.re_define.exec(thisline)) {
-			//console.log('hit');
-			var body = '';
-			var more = 1;
-			while(more) {
-				i++;
-				var line = ilines[i];
-				line = line.replace(/^\s+/, '');
-				line = line.replace(/\s+$/, '');
-				if(/;$/.test(line)) {
-					line = line.replace(/;$/, '');
-					more = 0;
-				}
-				body += line;
-				if(i >= ilines.length) { more = 0; }
-			}
-			var mytype = match[1].toLowerCase();
-			out.labels[mytype][match[2]] = body;
-			//console.log(mytype,">"+match[2]+"->",body);
-		} else {
-			//console.log('miss');
-			out.olines.push(thisline);
-		}
-	}
-
-	return out;
-}
 
 hrm_viewer.prototype.create_jump_diagram = function(width, height, offset_left, offset_top, srcs, dsts) {
 	var new_svg = new this.simple_svg(width, height);
@@ -383,63 +452,59 @@ hrm_viewer.prototype.append_code_table = function(id, data) {
 
 	root_div.empty();
 
-	var lines = data.split(new RegExp('\r?\n'));
+	var parser = new HRMParser(data);
 
 	var root = $(document.createElement('table'));
-	
-	if(lines[0] == "-- HUMAN RESOURCE MACHINE PROGRAM --") { lines.shift(); }
 
-	var labels = this.extract_labels(lines);
-	lines = labels.olines;
+	// fe0e means "render preceeding as text, do not substitute a color emoji.
+	// Fixes overly helpful behavior on Safari.
+	var rightarrow = '➡\ufe0e';
 
 	var dsts = {};
 	var srcs = [];
 
 	var num_len = 2;
 	var pad = "00000";
-	// TODO: This is the wrong way to count lines; many aren't.
-	var code_lines = this.count_code_lines(lines);
+	var code_lines = parser.code.length;
 	if(code_lines.length > 9999) { num_len = 5; }
 	else if(code_lines.length > 999) { num_len = 4; }
 	else if(code_lines.length > 99) { num_len = 3; } 
 	var line_number = 0;
-	for(var i = 0; i < lines.length; i++) {
-		var tokens = this.tokenize_line(lines[i]);
-		if(tokens[0] == 'blank') { continue; }
-		var newclass = tokens[0];
-		var iscode = this.is_code(tokens[0]);
+	for(var i = 0; i < parser.code.length; i++) {
+		var linecode = parser.code[i];
+		var cmd = linecode.cmd;
+		var arg = linecode.arg;
+		if(cmd == 'blank') { continue; }
+		var newclass = cmd;
 
-		// fe0e means "render preceeding as text, do not substitute a color emoji.
-		// Fixes overly helpful behavior on Safari.
-		var rightarrow = '➡\ufe0e';
-		var text = newclass;
+		var text = cmd;
 		var jmpdst;
-		if(text == 'bumpup') { text = 'bump +'; }
-		else if(text == 'bumpdn') { text = 'bump −'; }
-		else if(text == 'inbox') { text = rightarrow + ' inbox'; }
-		else if(text == 'outbox') { text = 'outbox ' + rightarrow; }
-		else if(text == 'asm_comment') {
-			text = tokens[1];
-			tokens = [];
-		} else if(text == 'jumpdst') {
-			text = tokens[1];
-			tokens = [];
-		} else if(text == 'jump' || text == 'jumpn' || text == 'jumpz') {
-			jmpdst = tokens[1];
-			tokens = [];
+		if(cmd == 'bumpup') { text = 'bump +'; }
+		else if(cmd == 'bumpdn') { text = 'bump −'; }
+		else if(cmd == 'inbox') { text = rightarrow + ' inbox'; }
+		else if(cmd == 'outbox') { text = 'outbox ' + rightarrow; }
+		else if(cmd == 'asm_comment') {
+			text = arg;
+			arg = undefined;
+		} else if(cmd == 'jumpdst') {
+			text = arg;
+			arg = undefined;
+		} else if(cmd == 'jump' || cmd == 'jumpn' || cmd == 'jumpz') {
+			jmpdst = arg;
+			arg = undefined;
 		}
 		
 		var comment_id;
-		if(text == 'comment') {
-			comment_id = tokens[1];
-			if(comment_id in labels.labels['comment']) {
+		if(cmd == 'comment') {
+			comment_id = arg;
+			if(comment_id in parser.comments) {
 				text = '';
-				tokens = [];
+				arg = undefined;
 			}
 		}
 
 		var e_cmd = $(document.createElement('span'));
-		if(text == "jumpn" || text == "jumpz") {
+		if(cmd == "jumpn" || cmd == "jumpz") {
 			e_cmd.append(document.createTextNode("jump"));
 			var overunder = $(document.createElement('div'));
 			overunder.addClass("jumptype");
@@ -459,46 +524,46 @@ hrm_viewer.prototype.append_code_table = function(id, data) {
 		e_cmd.addClass(newclass);
 		e_cmd.addClass('cmd');
 
-		if(newclass == 'jumpdst') {
+		if(cmd == 'jumpdst') {
 			dsts[text] = e_cmd;
 		}
 
 
-		if(newclass == "comment") {
-			if(comment_id in labels.labels['comment']) {
-				var svg = this.new_hrm_label_svg(labels.labels['comment'][comment_id]);
+		if(cmd == "comment") {
+			if(comment_id in parser.comments) {
+				var svg = this.new_hrm_label_svg(parser.comments[comment_id]);
 				svg = $(svg);
 				e_cmd.append(svg);
 			}
 		}
 
 		var e_arg = 0;
-		if(tokens.length == 2) {
+		if(arg !== undefined) {
 			e_arg = $(document.createElement('span'));
 			e_arg.addClass(newclass);
 			e_arg.addClass('arg');
 			var tmp;
-			if(this.re_memory_addr.test(tokens[1])) {
-				if(tokens[1] in labels.labels['label']) {
-					var svg = this.new_hrm_label_svg(labels.labels['label'][tokens[1]]);
+			if(this.re_memory_addr.test(arg)) {
+				if(arg in parser.labels) {
+					var svg = this.new_hrm_label_svg(parser.labels[arg]);
 					svg = $(svg);
 					e_arg.append(svg);
 				} else {
-					e_arg.text(tokens[1]);
+					e_arg.text(arg);
 				}
-			} else if(tmp = /\[(\d+)\]/.exec(tokens[1])) {
+			} else if(tmp = /\[(\d+)\]/.exec(arg)) {
 				var num = tmp[1];
-				if(num in labels.labels['label']) {
+				if(num in parser.labels) {
 					e_arg.append(document.createTextNode("[ "));
-					var svg = this.new_hrm_label_svg(labels.labels['label'][num]);
+					var svg = this.new_hrm_label_svg(parser.labels[num]);
 					svg = $(svg);
 					e_arg.append(svg);
 					e_arg.append(document.createTextNode(" ]"));
 				} else {
-					e_arg.text(tokens[1]);
+					e_arg.text(arg);
 				}
 			} else {
-				e_arg.text(tokens[1]);
+				e_arg.text(arg);
 			}
 		}
 		if(newclass=='jump' || newclass=='jumpn' || newclass=="jumpz") {
@@ -506,20 +571,17 @@ hrm_viewer.prototype.append_code_table = function(id, data) {
 		}
 
 		var new_td_num = $(document.createElement('td'));
-		if(iscode) {
-			line_number++;
-			var linenum = (pad+line_number).slice(-num_len);
+		if(parser.code[i].line_num) {
+			var linenum = (pad+parser.code[i].line_num).slice(-num_len);
 			new_td_num.text(linenum);
 		}
 		new_td_num.addClass('linenum');
 
 		var new_td_code = $(document.createElement('td'));
 		new_td_code.append(e_cmd);
-		//console.log(tokens[0]);
 		if(e_arg) {
 			new_td_code.append($(document.createTextNode(' ')));
 			new_td_code.append(e_arg);
-			//console.log("   "+tokens[1]);
 		}
 
 		var new_row = $(document.createElement('tr'));
