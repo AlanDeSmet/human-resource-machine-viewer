@@ -136,3 +136,7 @@ along with human-resource-machine-view.  If not, see
 	stroke-linejoin: round;
 	fill: transparent;
 }
+
+.hrmcode tr.active td {
+	background-color: blue;
+}

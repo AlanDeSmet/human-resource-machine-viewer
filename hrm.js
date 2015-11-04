@@ -642,6 +642,17 @@ HRMViewer.prototype.updateJumpArrows = function() {
 	this.root_div.append(this.svg);
 }
 
+// Always clears the current active line. If line_num
+// is defined, that line will be highlighted by adding
+// the "active" class to the <tr>
+HRMViewer.prototype.setActiveLine = function(line_num) {
+	if(this.active_row) { this.active_row.removeClass("active"); }
+	if(line_num === undefined) { return; }
+	this.active_row = this.line_to_row[line_num];
+	if(this.active_row) { this.active_row.addClass("active"); }
+
+}
+
 HRMViewer.prototype.download_and_append_code_table = function (id, url) {
 	"use strict";
 	var t = this;
