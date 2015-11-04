@@ -623,16 +623,12 @@ HRMViewer.prototype.append_code_table = function(id, data) {
 
 	this.root_div.append(this.root);
 
-
-
-	//table_width = 300;
-	//table_height = 50;
-
 	var that=this;
 	setTimeout(function(){that.updateJumpArrows()}, 10);
 }
 
 HRMViewer.prototype.updateJumpArrows = function() {
+	"use strict";
 	if(this.svg) { this.svg.remove(); }
 	var table_width = this.root.outerWidth();
 	var table_height = this.root.outerHeight();
