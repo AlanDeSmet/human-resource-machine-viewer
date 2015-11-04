@@ -18,6 +18,81 @@ along with human-resource-machine-view.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 
+// HRMLabel
+//
+// Takes a Human Resource Machine encoded label and optional height, width, and
+// brush diameter for the output.  If not specified, the height is 40, the
+// width is 3*height, and the brush diameter is height/11.
+//
+// Resulting object has .strokes, a list of strokes. Each stroke is a list of
+// points that should be connected with straight line segments.  Each point is
+// a list of two elements [x,y], scaled to the specified height and width.
+//
+// Resulting object also has .extents, which contains the extents
+// (.extents.min_x, .extents.min_y, .extents.max_x, .extents.max_y) and size
+// (.extents.width and .extends.height).  The extents are the smallest extents
+// that encompass all of the strokes, including accounting for the brush
+// diameter.  However, the extents will never go outside of the range 0,0
+// through width,height; strokes near the edge will be clipped, comforming to
+// Human Resource Machine's behavior.
+//
+// The height, width, and brush diameter, either the defaults or the specified
+// ones, are available as .height, .width, and .brush_diameter
+function HRMLabel(encoded_label, height, width, brush_diameter) {
+	function rescale(x, oldmax, newmax) { return x * newmax / oldmax; }
+
+	this.height = height || 40;
+	this.width = width || this.height*3;
+	this.brush_diameter = brush_diameter || this.height / 11;
+
+	var hrm_max = 65535;
+
+	var zlib = window.atob(encoded_label);
+	var zlibu8 = new Uint8Array(zlib.length);
+	for(var i = 0; i < zlib.length; i++) {
+		zlibu8[i] = zlib.charCodeAt(i);
+	}
+	var raw = pako.inflate(zlibu8);
+
+	var dv = new DataView(raw.buffer);
+	var elements = dv.getUint16(0, true);
+	var points = [];
+	this.strokes = [];
+
+	var min_x = this.width;
+	var max_x = 0;
+	var min_y = this.height;
+	var max_y = 0;
+	for(var i = 0; i < elements && (i*4+6)<= raw.length; i++) {
+		var index = i*4+4;
+		var x = dv.getUint16(index, true);
+		var y = dv.getUint16(index+2, true);
+		if(x == 0 && y == 0) {
+			this.strokes.push(points);
+			points = [];
+		} else {
+			x = rescale(x, hrm_max, this.width);
+			y = rescale(y, hrm_max, this.height);
+			points.push([x,y]);
+			max_x = Math.max(max_x, x);
+			min_x = Math.min(min_x, x);
+			max_y = Math.max(max_y, y);
+			min_y = Math.min(min_y, y);
+		}
+	}
+
+
+	this.extents = {
+		min_x: Math.max(min_x-this.brush_diameter/2, 0),
+		min_y: Math.max(min_y-this.brush_diameter/2, 0),
+		max_x: Math.min(max_x+this.brush_diameter/2, this.width),
+		max_y: Math.min(max_y+this.brush_diameter/2, this.height),
+	}
+	this.extents.width = this.extents.max_x - this.extents.min_x;
+	this.extents.height = this.extents.max_y - this.extents.min_y;
+}
+
+
 function hrm_viewer() { }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -112,71 +187,24 @@ hrm_viewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y
 
 ////////////////////////////////////////////////////////////////////////////////
 hrm_viewer.prototype.new_hrm_label_svg = function(enclabel) {
+	var label = new HRMLabel(enclabel);
 
-	var height = 40;
-	var width = height*3;
-	var brush_width = height/11;
-
-	var hrm_max = 65535;
-
-	var zlib = window.atob(enclabel);
-	var zlibu8 = new Uint8Array(zlib.length);
-	for(var i = 0; i < zlib.length; i++) {
-		zlibu8[i] = zlib.charCodeAt(i);
-	}
-	var raw = pako.inflate(zlibu8);
-
-	var dv = new DataView(raw.buffer);
-	var elements = dv.getUint16(0, true);
-	var points = [];
-	var list_points = [];
-
-	var min_x = width;
-	var max_x = 0;
-	var min_y = height;
-	var max_y = 0;
-	for(var i = 0; i < elements && (i*4+6)<= raw.length; i++) {
-		var index = i*4+4;
-		var x = dv.getUint16(index, true);
-		var y = dv.getUint16(index+2, true);
-		if(x == 0 && y == 0) {
-			list_points.push(points);
-			points = [];
-		} else {
-			x = this.rescale_label(x, hrm_max, width);
-			y = this.rescale_label(y, hrm_max, height);
-			points.push([x,y]);
-			max_x = Math.max(max_x, x);
-			min_x = Math.min(min_x, x);
-			max_y = Math.max(max_y, y);
-			min_y = Math.min(min_y, y);
-		}
-	}
-
-	var view_min_x = Math.max(min_x-brush_width/2, 0);
-	var view_min_y = Math.max(min_y-brush_width/2, 0);
-	var view_max_x = Math.min(max_x+brush_width/2, width);
-	var view_max_y = Math.min(max_y+brush_width/2, height);
-	var view_width = view_max_x - view_min_x;
-	var view_height = view_max_y - view_min_y;
-
-	var new_svg = new this.simple_svg(width,height, view_min_x, view_min_y, view_width, view_height);
-	for(var i = 0; i < list_points.length; i++) {
-		var points = list_points[i];
+	var new_svg = new this.simple_svg(label.width, label.height,
+		label.extents.min_x, label.extents.min_y, 
+		label.extents.width, label.extents.height);
+	for(var i = 0; i < label.strokes.length; i++) {
+		var points = label.strokes[i];
 		if(points.length == 0) {
 		} else if(points.length == 1) {
-			new_svg.circle(points[0][0], points[0][1], brush_width/2, 'black');
+			new_svg.circle(points[0][0], points[0][1], label.brush_diameter/2, 'black');
 		} else {
-			new_svg.polyline(points, brush_width, 'black');
+			new_svg.polyline(points, label.brush_diameter, 'black');
 		}
 	}
 
 	return new_svg.svg;
 }
 
-hrm_viewer.prototype.rescale_label = function(x, oldmax, newmax) {
-	return x * newmax / oldmax;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
