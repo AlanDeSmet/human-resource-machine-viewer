@@ -96,7 +96,8 @@ function HRMLabel(encoded_label, height, width, brush_diameter) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
+// HRMParser
+//
 // Pass in an HRM program in assembly format, either an as array of strings,
 // with each element representing a single line, or as a single string with
 // embedded newlines (prefixed with optional carriage returns).
