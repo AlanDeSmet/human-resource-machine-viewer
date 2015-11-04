@@ -118,6 +118,12 @@ function layoutChanged() {
 &lt;/script&gt;
 </pre>
 
+<p>You can highlight a particular line with setActiveLine,
+passing in the line number (from the original assembly) of the line to be highlighted.
+Only a single line is highlighted at a time; setActiveLine on a
+different line will remove the highlight from the previous one.
+Calling setActiveLine without arguments will clear the highlight.
+
 
 <div class="footer">Human Resource Machine Program Viewer ©2015 Alan De Smet</div>
 
