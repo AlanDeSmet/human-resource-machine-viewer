@@ -146,7 +146,7 @@ var font_ready = 0;
 
 function render_table() {
 	if( (code_ready.length == 0) || (!font_ready)) { return; }
-	var hrmv = new hrm_viewer();
+	var hrmv = new HRMViewer();
 	hrmv.append_code_table('code', code_ready);
 }
 
