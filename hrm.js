@@ -604,8 +604,8 @@ HRMViewer.prototype.append_code_table = function(id, data) {
 		}
 
 		var new_td_num = $(document.createElement('td'));
-		if(parser.code[i].line_num) {
-			var linenum = (pad+parser.code[i].line_num).slice(-num_len);
+		if(linecode.line_num) {
+			var linenum = (pad+linecode.line_num).slice(-num_len);
 			new_td_num.text(linenum);
 		}
 		new_td_num.addClass('linenum');
@@ -621,7 +621,7 @@ HRMViewer.prototype.append_code_table = function(id, data) {
 		new_row.append(new_td_num);
 		new_row.append(new_td_code);
 		this.root.append(new_row);
-		this.line_to_row[linecode.src_line_number] = new_row;
+		this.line_to_row[linecode.src_line_num] = new_row;
 	}
 
 	this.root_div.append(this.root);
