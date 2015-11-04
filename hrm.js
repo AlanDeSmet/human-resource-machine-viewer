@@ -340,25 +340,23 @@ HRMViewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y,
 		this.svg.appendChild(e);
 	}
 
-	this.circle = function(x, y, radius, color) {
+	this.circle = function(x, y, radius, newclass) {
 		var e = this.new_el('circle');
 		e.setAttribute('cx',x);
 		e.setAttribute('cy',y);
 		e.setAttribute('r',radius);
-		e.setAttribute('fill',color);
+		e.setAttribute('class',newclass);
 		this.svg.appendChild(e);
 	}
 
-	this.polyline = function(points, width, color) {
+	this.polyline = function(points, width, newclass) {
 		var e = this.new_el('polyline');
 		var pts = "";
 		for(var i = 0; i < points.length; i++) {
 			pts += points[i][0] + " " + points[i][1] + " ";
 		}
 		e.setAttribute('points', pts);
-		e.setAttribute('stroke-linecap', 'round');
-		e.setAttribute('stroke-linejoin', 'round');
-		e.setAttribute('stroke', color);
+		e.setAttribute('class', newclass);
 		e.setAttribute('fill', 'transparent');
 		e.setAttribute('stroke-width', width);
 		this.svg.appendChild(e);
@@ -367,12 +365,8 @@ HRMViewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y,
 	this.path = function(command, thisclass) {
 		var e = this.new_el('path');
 		e.setAttribute('d', command);
-		//e.setAttribute('stroke-linecap', 'round');
-		//e.setAttribute('stroke', color);
 		e.setAttribute('class', thisclass);
-		e.setAttribute('fill', 'transparent');
 		e.setAttribute('style', 'marker-end: url(#markerArrow)');
-		//e.setAttribute('stroke-width', width);
 		this.svg.appendChild(e);
 	}
 }
@@ -389,9 +383,9 @@ HRMViewer.prototype.new_hrm_label_svg = function(enclabel) {
 		var points = label.strokes[i];
 		if(points.length == 0) {
 		} else if(points.length == 1) {
-			new_svg.circle(points[0][0], points[0][1], label.brush_diameter/2, 'black');
+			new_svg.circle(points[0][0], points[0][1], label.brush_diameter/2, 'stroke');
 		} else {
-			new_svg.polyline(points, label.brush_diameter, 'black');
+			new_svg.polyline(points, label.brush_diameter, 'stroke');
 		}
 	}
 
