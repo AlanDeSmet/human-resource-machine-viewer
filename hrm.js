@@ -254,9 +254,29 @@ HRMParser.prototype.extract_labels = function(ilines) {
 HRMParser.prototype.re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
 
 ////////////////////////////////////////////////////////////////////////////////
-function HRMViewer() { 
+// HRMViewer
+//
+// Inserts a view of Human Resource Machine assembly into current document.
+// Take the id of an HTML element into which the view should be inserted, as
+// well as either the HRM assembly as a single string a URL to HRM assembly.
+// Relative URLs should work.  If it's HRM assembly, not a URL, the assembly
+// _must_ contain at least one newline; it's used to identify it.  Conversely,
+// a URL may not contain any newlines.
+function HRMViewer(id, source) { 
 	"use strict";
+
+	// If nothing is passed in, assume the user will call
+	// download_and_append_code_table or append_code_table themselves, although
+	// that's deprecated.
+	if(id === undefined) { return; }
+
+	if(source.indexOf("\n") >= 0) {
+		this.append_code_table(id, source);
+	} else {
+		this.download_and_append_code_table(id, source);
+	}
 }
+
 
 
 HRMViewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y, view_width, view_height) {

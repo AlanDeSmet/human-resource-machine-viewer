@@ -90,8 +90,7 @@ arrows will be misaligned.
 <pre>
 &lt;script&gt;
 function fonts_loaded() {
-	var hrmv = new HRMViewer();
-	hrmv.download_and_append_code_table('code', "simple.asm");
+	var hrmv = new HRMViewer('code', 'simple.asm');
 }
 WebFont.load({
 	google: { families: ['Passion One'] },
@@ -108,8 +107,7 @@ WebFont.load({
 
 <script>
 function fonts_loaded() {
-	var hrmv = new HRMViewer();
-	hrmv.download_and_append_code_table('code', "simple.asm");
+	var hrmv = new HRMViewer('code', 'simple.asm');
 }
 WebFont.load({
 	google: { families: ['Passion One'] },
