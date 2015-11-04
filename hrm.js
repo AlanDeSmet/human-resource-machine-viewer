@@ -166,6 +166,7 @@ hrm_viewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y
 		}
 		e.setAttribute('points', pts);
 		e.setAttribute('stroke-linecap', 'round');
+		e.setAttribute('stroke-linejoin', 'round');
 		e.setAttribute('stroke', color);
 		e.setAttribute('fill', 'transparent');
 		e.setAttribute('stroke-width', width);
