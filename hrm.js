@@ -254,11 +254,12 @@ HRMParser.prototype.extract_labels = function(ilines) {
 HRMParser.prototype.re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
 
 ////////////////////////////////////////////////////////////////////////////////
-function hrm_viewer() { 
+function HRMViewer() { 
 	"use strict";
 }
 
-hrm_viewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y, view_width, view_height) {
+
+HRMViewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y, view_width, view_height) {
 	"use strict";
 	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	svg.setAttribute('version', '1.1');
@@ -350,7 +351,7 @@ hrm_viewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-hrm_viewer.prototype.new_hrm_label_svg = function(enclabel) {
+HRMViewer.prototype.new_hrm_label_svg = function(enclabel) {
 	"use strict";
 	var label = new HRMLabel(enclabel);
 
@@ -375,11 +376,11 @@ hrm_viewer.prototype.new_hrm_label_svg = function(enclabel) {
 
 
 
-hrm_viewer.prototype.re_memory_addr = /^\d+$/;
-hrm_viewer.prototype.re_memory_indirect = /^\[(d+)\]$/;
+HRMViewer.prototype.re_memory_addr = /^\d+$/;
+HRMViewer.prototype.re_memory_indirect = /^\[(d+)\]$/;
 
 
-hrm_viewer.prototype.create_jump_diagram = function(width, height, offset_left, offset_top, srcs, dsts) {
+HRMViewer.prototype.create_jump_diagram = function(width, height, offset_left, offset_top, srcs, dsts) {
 	"use strict";
 	var new_svg = new this.simple_svg(width, height);
 	//new_svg.rect(0,0,table_width,table_height, 'green');
@@ -457,7 +458,7 @@ hrm_viewer.prototype.create_jump_diagram = function(width, height, offset_left, 
 	return new_svg.svg;
 }
 
-hrm_viewer.prototype.append_code_table = function(id, data) {
+HRMViewer.prototype.append_code_table = function(id, data) {
 	"use strict";
 	var root_div = $('#'+id);
 
@@ -622,7 +623,7 @@ hrm_viewer.prototype.append_code_table = function(id, data) {
 	setTimeout(cjd, 10);
 }
 
-hrm_viewer.prototype.download_and_append_code_table = function (id, url) {
+HRMViewer.prototype.download_and_append_code_table = function (id, url) {
 	"use strict";
 	var t = this;
 	function code_arrived(data) {
@@ -640,3 +641,5 @@ hrm_viewer.prototype.download_and_append_code_table = function (id, url) {
 	});
 }
 
+// Backward compatibility interface.  Deprecated.  Prefer HRMViewer.
+var hrm_viewer = HRMViewer;
