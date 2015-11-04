@@ -397,7 +397,6 @@ HRMViewer.prototype.new_hrm_label_svg = function(enclabel) {
 
 
 HRMViewer.prototype.re_memory_addr = /^\d+$/;
-HRMViewer.prototype.re_memory_indirect = /^\[(d+)\]$/;
 
 
 HRMViewer.prototype.create_jump_diagram = function(width, height, offset_left, offset_top, srcs, dsts) {
