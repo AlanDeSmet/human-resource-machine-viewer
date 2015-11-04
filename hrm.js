@@ -41,6 +41,7 @@ along with human-resource-machine-view.  If not, see
 // The height, width, and brush diameter, either the defaults or the specified
 // ones, are available as .height, .width, and .brush_diameter
 function HRMLabel(encoded_label, height, width, brush_diameter) {
+	"use strict";
 	function rescale(x, oldmax, newmax) { return x * newmax / oldmax; }
 
 	this.height = height || 40;
@@ -131,6 +132,7 @@ function HRMLabel(encoded_label, height, width, brush_diameter) {
 
 
 function HRMParser(lines) {
+	"use strict";
 
 	function is_code(cmd) {
 		if(cmd == 'invalid' ||
@@ -210,6 +212,7 @@ function HRMParser(lines) {
 // .labels['comment'][NUMBER] = encoded_comment_number
 // .labels['label'][NUMBER] = encoded_label_number (the memory address)
 HRMParser.prototype.extract_labels = function(ilines) {
+	"use strict";
 	var out = {};
 	out.olines = [];
 	out.labels = {};
@@ -217,6 +220,7 @@ HRMParser.prototype.extract_labels = function(ilines) {
 	out.labels['label'] = {};
 	for(var i = 0; i < ilines.length; i++) {
 		var thisline = ilines[i];
+		var match
 		//console.log(i,thisline);
 		if(match = this.re_define.exec(thisline)) {
 			//console.log('hit');
@@ -249,9 +253,12 @@ HRMParser.prototype.extract_labels = function(ilines) {
 HRMParser.prototype.re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
 
 ////////////////////////////////////////////////////////////////////////////////
-function hrm_viewer() { }
+function hrm_viewer() { 
+	"use strict";
+}
 
 hrm_viewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y, view_width, view_height) {
+	"use strict";
 	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	svg.setAttribute('version', '1.1');
 	svg.setAttribute('baseProfile', 'full');
@@ -343,6 +350,7 @@ hrm_viewer.prototype.simple_svg = function(width, height, view_min_x, view_min_y
 
 ////////////////////////////////////////////////////////////////////////////////
 hrm_viewer.prototype.new_hrm_label_svg = function(enclabel) {
+	"use strict";
 	var label = new HRMLabel(enclabel);
 
 	var new_svg = new this.simple_svg(label.width, label.height,
@@ -371,6 +379,7 @@ hrm_viewer.prototype.re_memory_indirect = /^\[(d+)\]$/;
 
 
 hrm_viewer.prototype.create_jump_diagram = function(width, height, offset_left, offset_top, srcs, dsts) {
+	"use strict";
 	var new_svg = new this.simple_svg(width, height);
 	//new_svg.rect(0,0,table_width,table_height, 'green');
 
@@ -448,6 +457,7 @@ hrm_viewer.prototype.create_jump_diagram = function(width, height, offset_left, 
 }
 
 hrm_viewer.prototype.append_code_table = function(id, data) {
+	"use strict";
 	var root_div = $('#'+id);
 
 	root_div.empty();
@@ -612,6 +622,7 @@ hrm_viewer.prototype.append_code_table = function(id, data) {
 }
 
 hrm_viewer.prototype.download_and_append_code_table = function (id, url) {
+	"use strict";
 	var t = this;
 	function code_arrived(data) {
 		t.append_code_table(id, data);
