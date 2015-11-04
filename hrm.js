@@ -478,20 +478,20 @@ HRMViewer.prototype.create_jump_diagram = function(width, height, offset_left, o
 
 HRMViewer.prototype.append_code_table = function(id, data) {
 	"use strict";
-	var root_div = $('#'+id);
+	this.root_div = $('#'+id);
 
-	root_div.empty();
+	this.root_div.empty();
 
 	var parser = new HRMParser(data);
 
-	var root = $(document.createElement('table'));
+	this.root = $(document.createElement('table'));
 
 	// fe0e means "render preceeding as text, do not substitute a color emoji.
 	// Fixes overly helpful behavior on Safari.
 	var rightarrow = '➡\ufe0e';
 
-	var dsts = {};
-	var srcs = [];
+	this.dsts = {};
+	this.srcs = [];
 
 	var num_len = 2;
 	var pad = "00000";
@@ -555,7 +555,7 @@ HRMViewer.prototype.append_code_table = function(id, data) {
 		e_cmd.addClass('cmd');
 
 		if(cmd == 'jumpdst') {
-			dsts[text] = e_cmd;
+			this.dsts[text] = e_cmd;
 		}
 
 
@@ -598,7 +598,7 @@ HRMViewer.prototype.append_code_table = function(id, data) {
 			}
 		}
 		if(newclass=='jump' || newclass=='jumpn' || newclass=="jumpz") {
-			srcs.push({dst:jmpdst, el:e_cmd});
+			this.srcs.push({dst:jmpdst, el:e_cmd});
 		}
 
 		var new_td_num = $(document.createElement('td'));
@@ -618,28 +618,29 @@ HRMViewer.prototype.append_code_table = function(id, data) {
 		var new_row = $(document.createElement('tr'));
 		new_row.append(new_td_num);
 		new_row.append(new_td_code);
-		root.append(new_row);
+		this.root.append(new_row);
 	}
 
-	root_div.append(root);
+	this.root_div.append(this.root);
 
 
-	var table_pos = root.offset();
-	var table_width = root.outerWidth();
-	var table_height = root.outerHeight();
 
 	//table_width = 300;
 	//table_height = 50;
 
-	var that = this;
-	var cjd = function() {
-		var svg = that.create_jump_diagram(
-			table_width + 50, table_height,
-			root_div.offset().left, root_div.offset().top,
-			srcs, dsts);
-		root_div.append(svg);
-	};
-	setTimeout(cjd, 10);
+	var that=this;
+	setTimeout(function(){that.updateJumpArrows()}, 10);
+}
+
+HRMViewer.prototype.updateJumpArrows = function() {
+	if(this.svg) { this.svg.remove(); }
+	var table_width = this.root.outerWidth();
+	var table_height = this.root.outerHeight();
+	this.svg = this.create_jump_diagram(
+		table_width + 50, table_height,
+		this.root_div.offset().left, this.root_div.offset().top,
+		this.srcs, this.dsts);
+	this.root_div.append(this.svg);
 }
 
 HRMViewer.prototype.download_and_append_code_table = function (id, url) {
