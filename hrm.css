@@ -114,6 +114,7 @@ along with human-resource-machine-view.  If not, see
 .hrmcode .jumppath {
 	stroke: #8d8dc1;
 	stroke-width: 0.3em;
+	fill: transparent;
 }
 .hrmcode .jumppatharrow {
 	stroke: #8d8dc1;
