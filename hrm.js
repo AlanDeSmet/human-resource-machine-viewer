@@ -269,8 +269,10 @@ HRMParser.prototype.re_define = /^DEFINE\s+(\S+)\s+(\S+)/i;
 // Relative URLs should work.  If it's HRM assembly, not a URL, the assembly
 // _must_ contain at least one newline; it's used to identify it.  Conversely,
 // a URL may not contain any newlines.
-function HRMViewer(id, source) { 
+function HRMViewer(id, source, options) { 
 	"use strict";
+
+        options = options || {};
 
 	// If nothing is passed in, assume the user will call
 	// download_and_append_code_table or append_code_table themselves, although
@@ -279,8 +281,11 @@ function HRMViewer(id, source) {
 
 	if(source.indexOf("\n") >= 0) {
 		this.append_code_table(id, source);
+		if (options.ready && typeof options.ready === 'function') {
+			options.ready(null, id);
+		}
 	} else {
-		this.download_and_append_code_table(id, source);
+		this.download_and_append_code_table(id, source, options.ready);
 	}
 }
 
@@ -653,15 +658,18 @@ HRMViewer.prototype.setActiveLine = function(line_num) {
 
 }
 
-HRMViewer.prototype.download_and_append_code_table = function (id, url) {
+HRMViewer.prototype.download_and_append_code_table = function (id, url, ready) {
 	"use strict";
 	var t = this;
 	function code_arrived(data) {
 		t.append_code_table(id, data);
+		if (ready && typeof ready === 'function') ready(null, id);
 	}
 	function failure(xhr,tstatus,err) {
+		var error = "Error loading "+url+". " + tstatus + " " + err;
 		$('#'+id).empty();
 		$('#'+id).text("Error loading "+url+". " + tstatus + " " + err);
+		if (ready && typeof ready === 'function') ready(error, id);
 	}
 	$.ajax({
 		url: url,
